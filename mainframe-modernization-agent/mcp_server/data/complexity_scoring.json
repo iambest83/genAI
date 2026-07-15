@@ -1,0 +1,50 @@
+{
+  "_version": "2026-06-16.1",
+  "_description": "Externalized configuration for estimate_complexity. Buckets, weights, and decision thresholds are all here so the scoring is auditable and tunable without code changes.",
+  "_provenance": {
+    "last_reviewed": "2026-06-16",
+    "reviewed_by": "mainframe-modernization CoE",
+    "sources": [
+      {"label": "AWS Mainframe Modernization sizing guidance", "ref": "internal-CoE-sizing-rubric"},
+      {"label": "FSI engagement actuals (2024-2026)", "ref": "internal-engagement-retro"}
+    ]
+  },
+  "max_score": 25,
+  "buckets": {
+    "num_cobol_programs": [
+      {"max": 50,  "weight": 1, "label": "small"},
+      {"max": 200, "weight": 3, "label": "medium"},
+      {"max": null, "weight": 5, "label": "large"}
+    ],
+    "num_jcl_jobs": [
+      {"max": 20,  "weight": 1, "label": "small"},
+      {"max": 100, "weight": 2, "label": "medium"},
+      {"max": null, "weight": 4, "label": "large"}
+    ]
+  },
+  "flags": {
+    "has_cics":  {"weight": 3, "factor": "CICS online transactions (significant complexity)"},
+    "has_ims":   {"weight": 4, "factor": "IMS usage (highest — hierarchical DB + transaction manager)"},
+    "has_db2":   {"weight": 2, "factor": "DB2 databases (moderate — good tooling available)"},
+    "has_mq":    {"weight": 2, "factor": "MQ Series messaging (integration complexity)"}
+  },
+  "graduated": {
+    "num_vsam_files": {
+      "step_divisor": 10,
+      "step_weight": 1,
+      "max_weight": 3,
+      "factor_template": "{n} VSAM files"
+    },
+    "num_copybooks": {
+      "threshold": 50,
+      "weight_above": 2,
+      "factor_template": "{n} shared copybooks (high coupling above 50)"
+    }
+  },
+  "levels": [
+    {"max_score": 5,  "level": "Low",       "recommended_pattern": "rehost",             "timeline": "3-6 months"},
+    {"max_score": 12, "level": "Medium",    "recommended_pattern": "replatform",         "timeline": "6-12 months"},
+    {"max_score": 18, "level": "High",      "recommended_pattern": "automated_refactor", "timeline": "12-18 months"},
+    {"max_score": null, "level": "Very High","recommended_pattern": "refactor",          "timeline": "18-24+ months"}
+  ]
+}

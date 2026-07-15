@@ -1,0 +1,126 @@
+{
+  "_version": "2026-07-08.2",
+  "patterns": {
+    "reimagine": {
+      "name": "Reimagine (AWS Transform + Claude Code)",
+      "description": "Reverse-engineer the mainframe to extract structured business rules and domain decomposition, then forward-engineer entirely new cloud-native microservices from those extractions. Distinct from Refactor (which preserves the monolithic architecture via deterministic COBOL-to-Java conversion) — Reimagine reshapes the architecture itself.",
+      "aws_services": ["AWS Transform for mainframe", "Amazon Bedrock", "Lambda", "ECS/Fargate", "EventBridge", "API Gateway", "Aurora", "DynamoDB", "S3", "Step Functions", "CDK"],
+      "best_for": "Applications where the target architecture must be event-driven / API-first / real-time (not just cloud-hosted); where original engineers are retiring and rebuilding institutional knowledge as extracted business rules is a first-class outcome; where the business is willing to accept process change to unlock digital channels",
+      "timeline": "18-36 months per application (reverse-engineer phase 3-6 months, forward-engineer + validate 12-30 months)",
+      "complexity": "Very High",
+      "cost_savings": "Variable — long-term architectural agility rather than pure infra cost reduction. Post-migration cloud infra typically 60-80% below mainframe TCO; larger benefits accrue from faster feature delivery and channel expansion.",
+      "fsi_use_cases": ["Digital banking platforms requiring event-driven processing across every channel (not nightly batch)", "Core banking replacement where terminal screens must become cloud-native APIs", "Real-time claims / underwriting pipelines replacing batch settlement", "Government benefits / entitlement systems moving from days-to-hours SLA"],
+      "risks": ["Longest timeline of any pattern", "Requires Human-in-the-Loop validation at every phase — AI-generated specifications MUST be reviewed by application SMEs before code generation", "Highest upfront investment in reverse-engineering artifacts", "Domain decomposition errors compound: bad bounded-context boundaries propagate through microservice design"],
+      "steps": [
+        "Phase 1 — Reverse Engineer (AWS Transform for mainframe): agents analyze COBOL, PL/I, JCL, copybooks, and data stores; produce structured business documentation, extract business rules with Given/When/Then acceptance criteria, decompose monolith into bounded contexts by business domain, and map data lineage + data dictionary",
+        "Phase 1 output: artifacts land in s3://<bucket>/transform-output/<job-id>/ with subdirs business-documentation/, data_analysis/, decomposition/, documentation/, inputs/, smf-analysis/",
+        "Phase 2 — Forward Engineer (Claude Code + agentic skills): download AWS Transform artifacts to local workspace; configure CLAUDE.md with @imports for project context and methodology; invoke skills like /bre-analysis, /ddd-analysis, /spec-generation, /database-generation, /microservice-code-generation, /iac-generation",
+        "Phase 2 validation gate: application SMEs REVIEW and validate the AI-generated specifications BEFORE any code generation. This human-in-the-loop step is non-negotiable per AWS guidance.",
+        "Phase 2 code generation: after spec sign-off, generate the microservices code + IaC (CDK), targeting any of Java (Spring Boot), Python, .NET, etc. — technology-stack choice belongs to the customer, not the tool",
+        "Phase 3 — Test & Deploy: automated testing (unit / integration) plus human verification via code review, integration testing, and user acceptance testing",
+        "Phase 3 cutover: incremental domain-by-domain cutover from mainframe monolith to microservices with parallel-run windows sized to the risk tier of each domain"
+      ]
+    },
+    "rehost": {
+      "name": "Rehost (Lift and Shift)",
+      "description": "Move mainframe workloads to AWS with minimal code changes using emulation. NEW-CUSTOMER STATUS NOTE: AWS Mainframe Modernization Managed Runtime (Micro Focus) closed to new customers 2025-11-07. Rehost paths for new customers today go through Rocket Software (which acquired the Micro Focus mainframe business in mid-2024) — either self-managed on EC2/containers, or via the AWS-Rocket partnership.",
+      "aws_services": ["EC2", "ECS/Fargate", "AWS Mainframe Modernization Managed Runtime (existing customers only)"],
+      "partner_tools": ["Rocket Software Enterprise Server (former Micro Focus)", "NTT UniKix", "LzLabs (niche, HLASM support)"],
+      "best_for": "Quick migration, low risk tolerance, limited modernization budget",
+      "timeline": "3-6 months per application",
+      "complexity": "Low",
+      "cost_savings": "20-40% infrastructure cost reduction",
+      "fsi_use_cases": ["Legacy COBOL batch jobs", "Stable transaction processing systems"],
+      "risks": ["Technical debt remains", "Limited cloud-native benefits", "Vendor lock-in to emulation runtime", "New customers must use Rocket Software or partner tooling — M2 Managed Runtime not available"],
+      "steps": [
+        "Assess current mainframe workloads and dependencies",
+        "Choose runtime: self-managed on EC2/containers, or Rocket Software / partner-managed",
+        "Configure runtime (Rocket Enterprise Server or partner equivalent) on AWS",
+        "Migrate COBOL/JCL/CICS artifacts",
+        "Validate functional equivalence",
+        "Performance test and tune",
+        "Cutover with rollback plan"
+      ]
+    },
+    "replatform": {
+      "name": "Replatform (Augmented Migration)",
+      "description": "Move to AWS with targeted optimizations - convert data stores, modernize interfaces",
+      "aws_services": ["Aurora", "DynamoDB", "Lambda", "API Gateway", "Step Functions"],
+      "best_for": "Moderate modernization with manageable risk",
+      "timeline": "6-12 months per application",
+      "complexity": "Medium",
+      "cost_savings": "40-60% infrastructure cost reduction",
+      "fsi_use_cases": ["Core banking batch modernization", "Payment processing optimization"],
+      "risks": ["Data migration complexity", "Schema conversion issues"],
+      "steps": [
+        "Inventory and classify workloads",
+        "Design target AWS architecture",
+        "Convert data stores (DB2 to Aurora, VSAM to DynamoDB)",
+        "Modernize interfaces (CICS screens to APIs)",
+        "Implement CI/CD pipeline",
+        "Parallel run and validate",
+        "Phased cutover"
+      ]
+    },
+    "refactor": {
+      "name": "Refactor (Re-architect)",
+      "description": "Rewrite mainframe applications as cloud-native microservices",
+      "aws_services": ["Lambda", "ECS/Fargate", "API Gateway", "Aurora", "DynamoDB", "SQS", "EventBridge", "Step Functions"],
+      "best_for": "Maximum cloud benefits, long-term cost optimization, agility",
+      "timeline": "12-24 months per application",
+      "complexity": "High",
+      "cost_savings": "60-80% infrastructure cost reduction",
+      "fsi_use_cases": ["Digital banking platforms", "Real-time fraud detection", "Customer onboarding"],
+      "risks": ["Longer timeline", "Higher upfront cost", "Business logic translation errors"],
+      "steps": [
+        "Decompose monolith into bounded contexts",
+        "Design microservices architecture",
+        "Rewrite business logic in modern language (Java/Python)",
+        "Implement event-driven patterns",
+        "Build automated testing suite",
+        "Deploy with blue/green strategy",
+        "Decommission mainframe components incrementally"
+      ]
+    },
+    "retire": {
+      "name": "Retire (Decommission)",
+      "description": "Identify and shut down mainframe workloads no longer needed",
+      "aws_services": ["S3 Glacier", "AWS Backup"],
+      "best_for": "Reducing mainframe MIPS costs quickly",
+      "timeline": "1-3 months",
+      "complexity": "Low",
+      "cost_savings": "100% for retired workloads",
+      "fsi_use_cases": ["Dormant reporting systems", "Superseded regulatory reports"],
+      "risks": ["Data retention compliance", "Hidden dependencies"],
+      "steps": [
+        "Identify candidate workloads with low/no usage",
+        "Verify no upstream/downstream dependencies",
+        "Archive data to S3 Glacier per retention policies",
+        "Document decommission for audit trail",
+        "Remove from mainframe"
+      ]
+    },
+    "automated_refactor": {
+      "name": "Automated Refactor (AWS Transform for mainframe)",
+      "description": "AI-assisted deterministic transformation of COBOL/PL/I/JCL/CICS/Db2/VSAM to Java (Spring Boot) + PostgreSQL / Groovy. Preserves the application's monolithic shape while modernizing the language and runtime. Distinct from Reimagine (which reshapes architecture into microservices) and Refactor-by-hand. AWS Transform for mainframe reached GA on 2025-05-15.",
+      "aws_services": ["AWS Transform for mainframe (GA 2025-05-15)", "Amazon Bedrock", "ECS/Fargate", "Aurora PostgreSQL", "Amazon Q Developer (successor to CodeWhisperer)"],
+      "partner_tools": ["AWS Transform (built on Blu Age technology, formerly Q Developer Transform)"],
+      "best_for": "Large COBOL/PL/I codebases needing systematic language conversion while preserving business rules",
+      "timeline": "6-18 months per application",
+      "complexity": "Medium-High",
+      "cost_savings": "50-70% infrastructure cost reduction (customer-reported: Itaú ~90% time reduction on discovery; Visma ~55% annual cost savings)",
+      "fsi_use_cases": ["Large-scale COBOL to Java conversion", "Batch modernization", "PL/I transformation for banking/insurance workloads"],
+      "risks": ["Generated code quality requires Human-in-the-Loop validation", "Manual tuning still required for niche patterns", "Monolithic shape preserved — not the same as Reimagine"],
+      "steps": [
+        "Phase 1 — Discovery: AWS Transform agents analyze COBOL/PL/I codebase (cyclomatic complexity, dependency graph)",
+        "Phase 2 — Planning: define target architecture, review Business Logic Extraction (BLE) outputs",
+        "Phase 3 — Code Conversion: automated COBOL → Java (Spring Boot), JCL → Groovy, Db2 → PostgreSQL",
+        "Phase 4 — Human-in-the-Loop validation of generated specifications and code (non-negotiable per AWS guidance)",
+        "Phase 5 — Testing: Functional Equivalence Testing against original mainframe behavior",
+        "Phase 6 — Deployment: production cutover with parallel-run windows",
+        "Optional: Reforge step to enhance the refactored code for maintainability"
+      ],
+      "historical_note": "This pattern was previously delivered via 'AWS Mainframe Modernization (Blu Age)' + 'CodeWhisperer' + 'Q Developer Transform' — those names are all superseded. Blu Age technology is now under AWS Transform; CodeWhisperer merged into Amazon Q Developer late 2024; Q Developer Transform was rebranded AWS Transform at GA 2025-05-15."
+    }
+  }
+}

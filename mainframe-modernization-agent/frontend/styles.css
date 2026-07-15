@@ -1,0 +1,968 @@
+/* ----- Base ---------------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&family=Major+Mono+Display&family=Orbitron:wght@700;800&display=swap");
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0a0f1a;
+  color: #e2e8f0;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "status"
+    "chat"
+    "input";
+  overflow: hidden;
+}
+
+/* ----- Header -------------------------------------------------------------- */
+header {
+  grid-area: header;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  padding: 14px 24px;
+  border-bottom: 1px solid #1e3a5f;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+header h1 {
+  /* Orbitron is geometric + futuristic — reads like a console banner.
+     Uppercased and tracked-out for a "boot screen" feel that suits the
+     mainframe → cloud subject without going retro-arcade. */
+  font-family: "Orbitron", "Space Grotesk", -apple-system, sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  flex-shrink: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #f8fafc 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+header h1 .accent {
+  background: linear-gradient(90deg, #38bdf8 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.header-controls { display: flex; gap: 12px; align-items: center; }
+
+/* "What I know" header button */
+.hdr-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #111827; border: 1px solid #334155;
+  color: #cbd5e1; font-size: 13px; padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  font-weight: 600;
+}
+.hdr-btn:hover { border-color: #38bdf8; color: #f1f5f9; background: #0f172a; }
+
+/* Pickers (customer / LoB chips) */
+.picker { position: relative; display: flex; gap: 10px; align-items: center; }
+.picker-group { display: flex; gap: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #111827; border: 1px solid #334155;
+  color: #cbd5e1; font-size: 13px; padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  font-weight: 500;
+}
+.chip:hover:not(:disabled) { border-color: #38bdf8; background: #0f172a; }
+.chip:disabled { opacity: .45; cursor: not-allowed; }
+.chip-icon { font-size: 16px; line-height: 1; margin-right: 4px; opacity: 1; display: inline-block; }
+.chip-label { color: #cbd5e1; font-weight: 600; font-size: 12px; }
+.chip-value { color: #f8fafc; font-weight: 700; }
+.chip-caret { color: #94a3b8; font-size: 10px; }
+.chip.is-bound { border-color: #38bdf8; background: linear-gradient(135deg, #0c2a44, #0f172a); }
+.chip.is-bound .chip-label { color: #38bdf8; }
+.chip.is-bound .chip-value { color: #f8fafc; }
+
+.dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: #0f172a; border: 1px solid #1e3a5f; border-radius: 10px;
+  padding: 14px; min-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  z-index: 50;
+}
+.dd-title { font-size: 12px; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
+.dropdown input[type=text] {
+  width: 100%; padding: 8px 12px; border-radius: 6px;
+  border: 1px solid #1e293b; background: #0a0f1a; color: #f1f5f9;
+  font-size: 13px; outline: none; margin-bottom: 8px;
+}
+.dropdown input[type=text]:focus { border-color: #38bdf8; }
+.dropdown button {
+  padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 600;
+}
+.dropdown > button { background: #0ea5e9; color: white; width: 100%; }
+.dropdown > button:hover { background: #0284c7; }
+.dd-options { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.dd-opt {
+  background: #1e293b; color: #cbd5e1; border-radius: 999px !important;
+  padding: 5px 10px !important; font-size: 12px !important;
+  font-weight: 500 !important; border: 1px solid transparent !important;
+}
+.dd-opt:hover { background: #334155; border-color: #38bdf8 !important; }
+.dd-hint { font-size: 11px; color: #64748b; margin-top: 8px; line-height: 1.4; }
+
+/* ----- Status bar (minimal — connection only) ---------------------------- */
+.status-bar {
+  grid-area: status;
+  padding: 6px 24px;
+  background: #0f172a;
+  font-size: 11px;
+  color: #475569;
+  border-bottom: 1px solid #1e293b;
+  display: flex; align-items: center; gap: 10px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+       flex-shrink: 0; box-shadow: 0 0 6px rgba(34,197,94,.5); }
+.dot.busy { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,.5);
+            animation: pulse 1s infinite; }
+.dot.off  { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,.5); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+.conn-text { color: #94a3b8; }
+
+/* ----- Chat ---------------------------------------------------------------- */
+/* Distinct, lighter slate-blue background so the chat surface is clearly
+   different from the header (deep navy) and the input area (almost-black). */
+.chat {
+  grid-area: chat;
+  overflow-y: auto;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #15233a;
+}
+
+.m { max-width: 85%; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.m.u { align-self: flex-end; }
+.m.u .b {
+  background: #f8fafc; color: #0a0f1a;
+  padding: 10px 14px; border-radius: 14px 14px 4px 14px;
+  font-size: 14px; line-height: 1.5;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  font-weight: 500;
+}
+.m.a {
+  align-self: flex-start; width: 85%;
+  /* Two-column row: small mascot avatar on the left, bubble takes
+     the rest. Avatar stays top-aligned so the bubble can grow tall. */
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.m.a .b {
+  background: #0c1525; border: 1px solid #233048; padding: 16px 20px;
+  border-radius: 4px 14px 14px 14px; font-size: 14px; line-height: 1.65;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  flex: 1;
+  min-width: 0;
+}
+.m-avatar {
+  flex: 0 0 auto;
+  width: 32px; height: 40px;
+  display: inline-block;
+  margin-top: 2px;
+}
+.m-avatar svg { width: 100%; height: 100%; display: block; }
+/* Busy = small mascot blinks while we wait for the first token. Once
+   tokens stream the class is removed and the avatar settles. */
+.m-avatar.is-busy { animation: avatar-blink 1.1s ease-in-out infinite; }
+@keyframes avatar-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .55; transform: scale(.96); }
+}
+.m.sys { align-self: stretch; max-width: 100%; }
+.m.sys .b {
+  background: #0f172a; border: 1px dashed #334155; color: #94a3b8;
+  padding: 10px 14px; border-radius: 8px; font-size: 13px; font-style: italic;
+}
+
+.m.a .b h1, .m.a .b h2, .m.a .b h3 { color: #f1f5f9; margin: 14px 0 6px; }
+.m.a .b h1 { font-size: 17px; } .m.a .b h2 { font-size: 15px; } .m.a .b h3 { font-size: 14px; color: #94a3b8; }
+.m.a .b p { margin: 6px 0; }
+.m.a .b ul, .m.a .b ol { margin: 6px 0 6px 20px; }
+.m.a .b li { margin: 3px 0; }
+.m.a .b table { border-collapse: collapse; margin: 12px 0; width: 100%; font-size: 13px; }
+.m.a .b th, .m.a .b td { border: 1px solid #1e293b; padding: 6px 10px; text-align: left; }
+.m.a .b th { background: #0f172a; color: #94a3b8; font-weight: 600; }
+.m.a .b code { background: #1e293b; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #e879f9; }
+.m.a .b pre { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; margin: 12px 0; overflow-x: auto; }
+.m.a .b pre code { background: none; padding: 0; color: #e2e8f0; }
+.m.a .b strong { color: #f1f5f9; }
+.m.a .b hr { border: none; border-top: 1px solid #1e293b; margin: 14px 0; }
+.m.a .b a { color: #38bdf8; }
+
+.cursor {
+  display: inline-block; width: 2px; height: 14px;
+  background: #38bdf8; animation: blink .5s infinite;
+  vertical-align: text-bottom; margin-left: 2px;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ----- "Thinking" indicator ------------------------------------------------
+   Word-at-a-time phrase ("Mainframing the request…") plus an animated
+   ellipsis so it never sits perfectly still while waiting for the first
+   token. The mascot avatar (in the same .m.a row) blinks in tandem. */
+.thinking {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 14px; color: #cbd5e1;
+  font-family: "Space Grotesk", -apple-system, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.thinking-text { display: inline-block; min-height: 1em; }
+.thinking::after {
+  content: "…";
+  display: inline-block;
+  color: #FF9900;
+  animation: thinking-dots 1.2s ease-in-out infinite;
+}
+@keyframes thinking-dots {
+  0%, 100% { opacity: 0.3; transform: translateX(0); }
+  50%      { opacity: 1;   transform: translateX(2px); }
+}
+
+/* Copy button — lives INSIDE the assistant bubble below the text. */
+.cp {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; font-size: 12px;
+  color: #cbd5e1; cursor: pointer;
+  background: #1e293b; border: 1px solid #475569;
+  padding: 6px 14px; border-radius: 6px;
+  font-weight: 600; letter-spacing: .03em;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.cp::before { content: "📋"; font-size: 12px; }
+.cp:hover { color: #f1f5f9; border-color: #38bdf8; background: #283548; }
+.cp:active { transform: translateY(1px); }
+
+.error-text { color: #ef4444; }
+
+/* Drift prompt buttons inside an assistant bubble */
+.drift-actions {
+  margin-top: 14px; display: flex; gap: 8px;
+  border-top: 1px solid #1e293b; padding-top: 12px;
+}
+.drift-actions .btn {
+  font-size: 13px; padding: 8px 14px; border-radius: 8px;
+  border: none; cursor: pointer; font-weight: 600;
+}
+.btn-primary { background: #0ea5e9; color: #fff; }
+.btn-primary:hover { background: #0284c7; }
+.btn-ghost { background: transparent; color: #cbd5e1; border: 1px solid #334155; }
+.btn-ghost:hover { border-color: #38bdf8; color: #f1f5f9; }
+.drift-actions .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ----- Welcome "graffiti" ------------------------------------------------- */
+/* Casual, visually appealing intro. Disappears on first user message. */
+.welcome {
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 8px 16px 16px;
+  text-align: left;
+  position: relative;
+  width: 100%;
+}
+/* The hero (mascot + title) and the funfact/foot stay in a centered
+   reading column while the rails extend toward the viewport edges. */
+.welcome-hero, .welcome-foot, .welcome-funfact {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero block. Two stacked rows:
+     1. welcome-hero-top — mascot pinned top-left, title + sub on the right
+     2. welcome-hero-row — visual strip + fun-fact card side-by-side */
+.welcome-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.welcome-hero-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.welcome-hero-mascot {
+  flex: 0 0 auto;
+  width: 124px;
+  height: 160px;
+}
+.welcome-hero-mascot svg { width: 100%; height: 100%; display: block; }
+.welcome-hero-text { flex: 1; min-width: 0; text-align: left; }
+
+.welcome-hero-row {
+  /* Visual strip spans the full width now. Fun fact lives at the bottom
+     of the welcome panel instead. */
+  display: block;
+  width: 100%;
+}
+.welcome-hero-art {
+  width: 100%;
+  filter: drop-shadow(0 6px 24px rgba(56,189,248,.22));
+}
+.welcome-hero-art svg { width: 100%; height: auto; display: block; max-height: 380px; }
+
+@media (max-width: 900px) {
+  .welcome-hero-row { grid-template-columns: 1fr; }
+}
+
+/* Subtle floating animation for the microservices nodes. */
+.mf-cloud .ms-node { transform-origin: center; }
+.mf-cloud .ms-node:nth-child(1) { animation: ms-float 4s ease-in-out infinite; }
+.mf-cloud .ms-node:nth-child(2) { animation: ms-float 4s ease-in-out infinite .4s; }
+.mf-cloud .ms-node:nth-child(3) { animation: ms-float 4s ease-in-out infinite .8s; }
+.mf-cloud .ms-node:nth-child(4) { animation: ms-float 4s ease-in-out infinite 1.2s; }
+.mf-cloud .ms-node:nth-child(5) { animation: ms-float 4s ease-in-out infinite 1.6s; }
+.mf-cloud .ms-node:nth-child(6) { animation: ms-float 4s ease-in-out infinite 2.0s; }
+@keyframes ms-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+/* Fun fact callout — sits in the right column of the hero row so it
+   doesn't push the welcome below the fold. AWS-orange accent. */
+.welcome-funfact {
+  /* Sits near the very bottom of the welcome panel, well below the
+     foot line, so it reads as a separate footer-strip. */
+  margin: 110px 0 12px;
+  padding: 10px 18px;
+  background: #FFF7E6;
+  color: #232F3E;
+  border: 1px solid #FF9900;
+  border-left: 6px solid #FF9900;
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  box-shadow: 0 2px 10px rgba(255,153,0,.18);
+}
+.welcome-funfact b {
+  color: #232F3E;
+  font-family: "Space Grotesk", -apple-system, sans-serif;
+  font-weight: 800;
+  letter-spacing: .02em;
+  margin-right: 6px;
+}
+.funfact-bulb {
+  display: inline-block;
+  font-size: 18px;
+  margin-right: 10px;
+  vertical-align: middle;
+  /* 💡 emoji renders natively; just give it a soft pulse for life. */
+  filter: drop-shadow(0 0 4px rgba(255,153,0,.4));
+  animation: bulb-glow 2.2s ease-in-out infinite;
+}
+@keyframes bulb-glow {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255,153,0,.35)); transform: scale(1); }
+  50%      { filter: drop-shadow(0 0 9px rgba(255,153,0,.85)); transform: scale(1.12); }
+}
+.welcome-funfact em { color: #FF9900; font-style: normal; font-weight: 700; }
+
+@media (max-width: 760px) {
+  .welcome-hero {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .welcome-hero-art { justify-self: center; max-width: 100%; }
+}
+
+.welcome-title {
+  /* Major Mono Display — typewriter / boot-screen feel that nods to the
+     mainframe origin without looking dated. Allowed to wrap so 'Sherpa'
+     never clips on narrower screens. */
+  font-family: "Major Mono Display", "JetBrains Mono", monospace;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #f1f5f9;
+  letter-spacing: -0.005em;
+  margin-bottom: 12px;
+}
+.welcome-title-accent {
+  background: linear-gradient(90deg, #38bdf8 0%, #a78bfa 60%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.welcome-sub {
+  font-size: 18px;
+  color: #cbd5e1;
+  max-width: 880px;
+  margin: 0 auto;
+  line-height: 1.55;
+  text-align: center;
+}
+/* Three-column "stage": tall mainframe rail flush to the LEFT viewport
+   edge, card grid + R-word streams in the middle, tall AWS cloud rail
+   flush to the RIGHT viewport edge. The stage spans the full chat
+   width so the rails actually live in the empty side-margins from
+   the prior layout. */
+.welcome-stage {
+  /* Two-column: mainframe rail (left) + card grid (right). The cloud
+     rail has been removed; the cards now own everything to the right
+     of the mainframe. */
+  display: grid;
+  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: stretch;
+  margin: 50px 0 0;
+  width: 100%;
+}
+.welcome-rail {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+/* Cap the rail SVG so the whole welcome screen fits in one viewport.
+   The mainframe is decorative — it shouldn't push the cards off-screen. */
+.welcome-rail svg { width: 100%; height: auto; max-height: 460px; }
+.rail-label {
+  font-family: "Space Grotesk", -apple-system, sans-serif;
+  font-size: 18px; font-weight: 800; letter-spacing: 0.08em;
+  color: #FF9900;
+  text-transform: uppercase;
+}
+
+/* Middle column: stacked card-rows with R-streams flowing in the gaps
+   between them. */
+.welcome-middle { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+.r-stream {
+  position: relative;
+  height: 32px;
+  overflow: hidden;
+  font-family: "Space Grotesk", -apple-system, sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  margin: 2px 0;
+}
+.r-stream .r-word {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  white-space: nowrap;
+  opacity: 0.85;
+  /* Stagger via long-running keyframes per word; durations vary so the
+     stream feels alive instead of metronomic. */
+  animation-name: r-flow;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+.r-stream .r-1 { color: #FF9900; animation-duration: 14s; animation-delay: 0s;   }
+.r-stream .r-2 { color: #00A4DB; animation-duration: 16s; animation-delay: 2.6s; }
+.r-stream .r-3 { color: #FF9900; animation-duration: 13s; animation-delay: 5.2s; }
+.r-stream .r-4 { color: #7DD3FC; animation-duration: 15s; animation-delay: 7.8s; }
+.r-stream .r-5 { color: #FF9900; animation-duration: 14.5s; animation-delay: 10.4s; }
+@keyframes r-flow {
+  0%   { left: -25%; opacity: 0; }
+  8%   { opacity: .85; }
+  92%  { opacity: .85; }
+  100% { left: 105%; opacity: 0; }
+}
+
+.welcome-grid {
+  /* 3 columns. Generous gap so the cards don't crowd each other. */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin: 0;
+}
+@media (max-width: 1280px) {
+  .welcome-stage { grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) minmax(180px, 220px); gap: 22px; }
+}
+@media (max-width: 980px) {
+  .welcome-stage { grid-template-columns: 1fr; }
+  .welcome-rail svg { max-height: 240px; }
+  .welcome-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 540px) {
+  .welcome-grid { grid-template-columns: 1fr; }
+}
+.welcome-card {
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  /* High-contrast card slab. Lighter slate gradient + AWS-orange accent
+     on the left edge so each card reads clearly against the navy chat
+     surface. */
+  background: linear-gradient(160deg, #2a3a5c 0%, #344770 100%);
+  border: 1px solid #4a608a;
+  border-left: 3px solid #FF9900;
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: inherit;
+  transition: border-color .15s, transform .15s, background .15s, box-shadow .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 110px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+.welcome-card:hover {
+  border-color: #FF9900;
+  border-left-color: #FFB347;
+  background: linear-gradient(160deg, #344770 0%, #3f5489 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(255,153,0,.28);
+}
+.welcome-card:active { transform: translateY(0); }
+.welcome-card-h {
+  font-family: "Space Grotesk", -apple-system, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.welcome-card-b {
+  font-size: 14.5px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+.welcome-foot {
+  font-size: 14px;
+  color: #94a3b8;
+  border-top: none;
+  padding-top: 0;
+  margin-top: 50px;
+  text-align: center;
+}
+.welcome-foot strong { color: #f1f5f9; font-weight: 700; }
+
+/* ----- Input area (probe + input bar) ------------------------------------ */
+.input-area {
+  grid-area: input;
+  display: flex;
+  flex-direction: column;
+  /* Distinct lighter slab so the input area is visually separated from the
+     slate-blue chat surface above. */
+  background: #1f2a44;
+  border-top: 2px solid #38bdf8;
+}
+
+/* ----- Probe callout ------------------------------------------------------- */
+/* Hidden by default. ProbeCallout adds .is-active to reveal. */
+.probe-host { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height .15s ease; }
+.probe-host.is-active { max-height: 200px; }
+.probe-host.is-active .probe-inner { display: flex; }
+.probe-host:not(.is-active) .probe-inner { display: none; }
+.probe-inner {
+  background: #0f1f3a; border: 1px solid #38bdf8;
+  border-radius: 10px; padding: 10px 12px;
+  margin: 12px 0 0 0;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, .15);
+}
+.probe-icon { color: #38bdf8; font-weight: 700; flex-shrink: 0; cursor: pointer; }
+.probe-text { flex: 1; font-size: 13px; color: #e2e8f0; line-height: 1.4; cursor: pointer; }
+.probe-defer {
+  background: #1e293b; border: 1px solid #475569; color: #fbbf24;
+  font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  padding: 6px 14px; border-radius: 6px; cursor: pointer;
+  flex-shrink: 0; transition: background .15s, border-color .15s;
+}
+.probe-defer:hover { background: #fbbf24; color: #0a0f1a; border-color: #fbbf24; }
+.probe-dismiss {
+  background: none; border: none; color: #475569; cursor: pointer;
+  font-size: 18px; padding: 0 4px; line-height: 1; flex-shrink: 0;
+}
+.probe-dismiss:hover { color: #94a3b8; }
+
+/* ----- Input bar ----------------------------------------------------------- */
+.inp {
+  padding: 16px 24px;
+  display: flex; gap: 12px; align-items: stretch;
+}
+/* Two-line textarea — sized for ~2 visible lines, doesn't grow on its own
+   so the layout stays stable. Shift+Enter inserts a newline; plain Enter
+   sends (handled in app.js). */
+.inp textarea {
+  flex: 1; padding: 12px 16px; border-radius: 10px;
+  border: 1px solid #475569; background: #0f1729;
+  color: #f8fafc; font-size: 14px; outline: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  font-family: inherit;
+  resize: none;
+  min-height: 60px;
+  line-height: 1.45;
+}
+.inp textarea::placeholder { color: #94a3b8; }
+.inp textarea:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+.inp button {
+  padding: 12px 20px; border-radius: 10px; border: none;
+  background: #0ea5e9; color: #fff; font-size: 14px;
+  cursor: pointer; font-weight: 600;
+  align-self: stretch;
+}
+.inp button:hover:not(:disabled) { background: #0284c7; }
+.inp button:disabled { background: #1e293b; color: #475569; cursor: not-allowed; }
+
+/* ----- Responsive ---------------------------------------------------------- */
+@media (max-width: 700px) {
+  header { flex-direction: column; align-items: stretch; gap: 10px; }
+  .header-controls { justify-content: space-between; flex-wrap: wrap; }
+  header h1 { font-size: 18px; text-align: center; }
+  .welcome-title { font-size: 30px; }
+}
+
+/* ----- Listen-mode: paste-notes modal (item 4.1) -------------------------- */
+.notes-modal {
+  position: fixed; inset: 0;
+  background: rgba(8, 12, 22, 0.78);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.notes-modal[hidden] { display: none; }
+.notes-modal-card {
+  background: #15233a;
+  border: 1px solid #38507a;
+  border-radius: 14px;
+  width: min(820px, 100%);
+  max-height: 90vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,.55);
+}
+.notes-modal-head {
+  padding: 16px 22px;
+  border-bottom: 1px solid #233048;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 17px; font-weight: 700;
+  color: #f1f5f9;
+}
+.notes-modal-close {
+  background: none; border: none; color: #94a3b8;
+  font-size: 22px; cursor: pointer; padding: 0 6px;
+}
+.notes-modal-close:hover { color: #f1f5f9; }
+.notes-modal-body {
+  padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 12px;
+  overflow: hidden;
+}
+.notes-modal-help {
+  font-size: 13.5px; line-height: 1.5; color: #94a3b8;
+}
+.notes-modal-help strong { color: #f1f5f9; font-weight: 600; }
+.notes-modal-body textarea {
+  flex: 1;
+  min-height: 280px;
+  background: #0a1322;
+  border: 1px solid #233048;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "Menlo", monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+}
+.notes-modal-body textarea:focus { border-color: #38bdf8; }
+.notes-modal-foot {
+  display: flex; gap: 10px; align-items: center; justify-content: flex-end;
+  padding-top: 4px;
+}
+.notes-modal-meta {
+  margin-right: auto;
+  font-size: 12px; color: #64748b;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* ----- Listen-mode: extraction preview card (items 4.1 + 4.6) ------------- */
+.preview-card { align-self: stretch; max-width: 100%; }
+.preview-card .preview-body {
+  background: #15233a;
+  border: 1px solid #38507a;
+  border-left: 4px solid #FF9900;
+  border-radius: 12px;
+  padding: 18px 22px;
+  font-style: normal;
+  color: #e2e8f0;
+}
+.preview-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.preview-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 16px; font-weight: 700; color: #f1f5f9;
+}
+.preview-target {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px; color: #FF9900; font-weight: 700;
+}
+.preview-counts {
+  display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 8px;
+}
+.preview-pill {
+  background: #0c1a2e;
+  border: 1px solid #233048;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px; color: #cbd5e1;
+}
+.preview-pill b { color: #FF9900; font-weight: 700; }
+.preview-help {
+  font-size: 13px; color: #94a3b8; line-height: 1.5;
+  margin: 4px 0 12px;
+}
+.preview-help strong { color: #f1f5f9; }
+.preview-section { margin: 10px 0 6px; }
+.preview-section-h {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12.5px; font-weight: 800; letter-spacing: .08em;
+  color: #FF9900; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.preview-list { list-style: none; padding: 0; margin: 0; }
+.preview-row {
+  border-top: 1px solid #1e293b;
+  padding: 8px 0;
+}
+.preview-row:first-child { border-top: none; }
+.preview-row label {
+  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+}
+.preview-row input[type=checkbox] {
+  margin-top: 4px;
+  accent-color: #FF9900;
+  width: 16px; height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.preview-row-body { flex: 1; min-width: 0; }
+.preview-row-primary {
+  font-size: 14px; line-height: 1.45; color: #e2e8f0;
+  word-break: break-word;
+}
+.preview-row-primary code {
+  background: #0c1a2e; padding: 1px 6px; border-radius: 4px;
+  font-size: 12.5px; color: #7DD3FC;
+}
+.preview-row-primary strong { color: #FF9900; font-weight: 700; }
+.preview-row-secondary {
+  font-size: 12.5px; color: #64748b; margin-top: 2px;
+}
+.preview-quote {
+  display: block;
+  font-size: 12.5px; color: #94a3b8;
+  font-family: "JetBrains Mono", monospace;
+  margin-top: 3px;
+  padding-left: 8px; border-left: 2px solid #233048;
+}
+.preview-speaker {
+  color: #FF9900; font-weight: 700;
+}
+.preview-due {
+  color: #FF9900; font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+}
+.preview-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid #1e293b;
+}
+.preview-status {
+  margin-top: 10px; padding-top: 8px;
+  border-top: 1px solid #1e293b;
+  font-size: 12.5px; color: #94a3b8; font-style: italic;
+}
+
+/* ----- Recording modal (item 4.2) ----------------------------------------- */
+.rec-modal {
+  position: fixed; inset: 0;
+  background: rgba(8, 12, 22, 0.78);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; padding: 24px;
+}
+.rec-modal[hidden] { display: none; }
+.rec-modal-card {
+  background: #15233a;
+  border: 1px solid #38507a;
+  border-radius: 14px;
+  width: min(640px, 100%);
+  max-height: 90vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,.55);
+}
+.rec-modal-head {
+  padding: 16px 22px;
+  border-bottom: 1px solid #233048;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 17px; font-weight: 700; color: #f1f5f9;
+}
+.rec-modal-close {
+  background: none; border: none; color: #94a3b8;
+  font-size: 22px; cursor: pointer; padding: 0 6px;
+}
+.rec-modal-close:hover { color: #f1f5f9; }
+.rec-modal-body {
+  padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.rec-modal-help {
+  font-size: 13.5px; line-height: 1.5; color: #94a3b8;
+}
+.rec-consent {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px;
+  background: rgba(255,153,0,.08);
+  border: 1px solid rgba(255,153,0,.35);
+  border-left: 3px solid #FF9900;
+  border-radius: 8px;
+  font-size: 13px; line-height: 1.5; color: #cbd5e1;
+}
+.rec-consent input[type="checkbox"] {
+  margin-top: 3px; accent-color: #FF9900;
+  width: 16px; height: 16px; flex-shrink: 0; cursor: pointer;
+}
+.rec-consent strong { color: #FF9900; }
+.rec-tabs {
+  display: flex; gap: 4px;
+  border-bottom: 1px solid #233048;
+}
+.rec-tab {
+  background: none; border: none; cursor: pointer;
+  padding: 10px 16px; font-size: 13px; font-weight: 600;
+  color: #94a3b8; border-bottom: 2px solid transparent;
+  font-family: inherit;
+}
+.rec-tab:hover { color: #cbd5e1; }
+.rec-tab.is-active { color: #FF9900; border-bottom-color: #FF9900; }
+.rec-tab-panel { display: flex; flex-direction: column; gap: 12px; }
+.rec-tab-panel[hidden] { display: none; }
+.rec-status {
+  font-size: 13px; color: #cbd5e1; line-height: 1.5;
+  min-height: 1em;
+}
+.rec-status .rec-live {
+  color: #ef4444; font-weight: 700;
+  animation: rec-pulse 1.2s ease-in-out infinite;
+}
+@keyframes rec-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .55; }
+}
+.rec-status .rec-error { color: #ef4444; }
+.rec-controls {
+  display: flex; gap: 10px; align-items: center;
+}
+.rec-modal-body input[type="file"] {
+  background: #0a1322;
+  border: 1px solid #233048; border-radius: 6px;
+  padding: 10px; color: #e2e8f0; font-size: 13px;
+}
+.rec-meter {
+  height: 6px; background: #0a1322; border-radius: 3px; overflow: hidden;
+}
+.rec-meter span {
+  display: block; height: 100%; width: 100%;
+  background: linear-gradient(90deg, #00A4DB, #FF9900);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 80ms linear;
+}
+
+/* ----- Recording mascot (item 4.2) ---------------------------------------- */
+.rec-mascot {
+  display: flex; justify-content: center;
+  margin: -4px 0 4px;
+}
+.rec-mascot svg { width: 200px; height: auto; }
+
+/* Hide the listening-only ornaments by default; the modal's record
+   panel adds .is-listening when MediaRecorder has actually started. */
+.rec-mascot .rec-eq,
+.rec-mascot .rec-waves,
+.rec-mascot .rec-mascot-label { opacity: 0; transition: opacity .2s ease; }
+
+.rec-mascot.is-listening .rec-eq,
+.rec-mascot.is-listening .rec-waves,
+.rec-mascot.is-listening .rec-mascot-label { opacity: 1; }
+
+/* Equalizer bars dance while listening */
+.rec-mascot.is-listening .rec-eq .bar {
+  transform-origin: 50% 100%;
+  animation: rec-eq-bounce 0.9s ease-in-out infinite;
+}
+.rec-mascot.is-listening .rec-eq .b1 { animation-delay: 0.0s; }
+.rec-mascot.is-listening .rec-eq .b2 { animation-delay: 0.12s; }
+.rec-mascot.is-listening .rec-eq .b3 { animation-delay: 0.24s; }
+.rec-mascot.is-listening .rec-eq .b4 { animation-delay: 0.18s; }
+.rec-mascot.is-listening .rec-eq .b5 { animation-delay: 0.06s; }
+@keyframes rec-eq-bounce {
+  0%, 100% { transform: scaleY(0.4); }
+  50%      { transform: scaleY(1.6); }
+}
+
+/* Sound waves pulse outward */
+.rec-mascot.is-listening .rec-waves path {
+  animation: rec-wave-pulse 1.6s ease-out infinite;
+}
+.rec-mascot.is-listening .rec-waves .w2 { animation-delay: 0.4s; }
+.rec-mascot.is-listening .rec-waves .w3 { animation-delay: 0.8s; }
+@keyframes rec-wave-pulse {
+  0%   { opacity: 1; transform: scaleX(0.85); }
+  100% { opacity: 0; transform: scaleX(1.6); }
+}
+
+/* "LISTENING" label gentle fade */
+.rec-mascot.is-listening .rec-mascot-label {
+  animation: rec-label-pulse 1.6s ease-in-out infinite;
+}
+@keyframes rec-label-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* ----- Inline edit on extraction-preview rows (item 4.6) ----------------- */
+.preview-row {
+  /* Make room for the edit pencil at the right edge of the row */
+  position: relative;
+}
+.preview-edit {
+  background: none; border: 1px solid #38507a;
+  color: #cbd5e1; cursor: pointer;
+  width: 26px; height: 26px; border-radius: 6px;
+  font-size: 13px; line-height: 1;
+  margin-left: 8px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.preview-edit:hover { background: #1f2a44; border-color: #FF9900; color: #FF9900; }
+.preview-edit:disabled { opacity: .35; cursor: not-allowed; }
+
+/* Hint that the value spans are clickable for editing */
+.preview-editable {
+  /* Subtle dotted underline tells the SA "this is editable" */
+  border-bottom: 1px dotted rgba(255,153,0,0.45);
+  cursor: text;
+}
+.preview-editable:hover { color: #FF9900; }
+
+.preview-edit-input {
+  font: inherit;
+  font-size: 13.5px;
+  background: #0a1322;
+  border: 1px solid #FF9900;
+  border-radius: 4px;
+  color: #f1f5f9;
+  padding: 2px 8px;
+  min-width: 160px;
+  outline: none;
+}

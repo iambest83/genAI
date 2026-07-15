@@ -1,0 +1,95 @@
+{
+  "tables": [
+    {
+      "TableName": "MfModAgent-CustomerMemory",
+      "_description": "Per-(SA, customer) memory. Isolation enforced by PK=sa_id.",
+      "BillingMode": "PAY_PER_REQUEST",
+      "AttributeDefinitions": [
+        {"AttributeName": "PK", "AttributeType": "S"},
+        {"AttributeName": "SK", "AttributeType": "S"}
+      ],
+      "KeySchema": [
+        {"AttributeName": "PK", "KeyType": "HASH"},
+        {"AttributeName": "SK", "KeyType": "RANGE"}
+      ],
+      "PointInTimeRecoverySpecification": {"PointInTimeRecoveryEnabled": true},
+      "SSESpecification": {"SSEEnabled": true, "SSEType": "KMS"},
+      "TimeToLiveSpecification": {
+        "AttributeName": "ttl",
+        "Enabled": true,
+        "_note": "Per-turn audit rows carry ttl = now + 90d (TURN_EVENT_TTL_DAYS in agent/memory.py); profile snapshot rows omit ttl and live forever. FIXES.md #14 (d)."
+      },
+      "_key_patterns": {
+        "PK": "sa#<sa_id>",
+        "SK_profile": "customer#<customer_id>#profile",
+        "SK_turn_fact": "customer#<customer_id>#turn#<NNNNNN>#<ms>"
+      },
+      "_access_patterns": [
+        "Load profile for (sa, customer): GetItem PK=sa#X, SK=customer#Y#profile",
+        "List all customers for an SA: Query PK=sa#X, SK begins_with customer#",
+        "Delete one customer for an SA: Query + BatchWrite delete, SK begins_with customer#Y#"
+      ],
+      "_no_gsi_reason": "Intentional — no cross-SA access path. Shared-customer memory is a separate record type governed differently.",
+      "_cloudformation_hint": "See MfModAgent-Stack.yaml (not included)."
+    },
+    {
+      "TableName": "MfModAgent-WsConnections",
+      "_description": "Live WebSocket connection bindings. One row per open WS.",
+      "BillingMode": "PAY_PER_REQUEST",
+      "AttributeDefinitions": [
+        {"AttributeName": "connectionId", "AttributeType": "S"}
+      ],
+      "KeySchema": [
+        {"AttributeName": "connectionId", "KeyType": "HASH"}
+      ],
+      "TimeToLiveSpecification": {
+        "AttributeName": "ttl",
+        "Enabled": true,
+        "_note": "Connections auto-expire; set ttl = now + 24h on $connect."
+      },
+      "_item_shape": {
+        "connectionId": "<ws conn id>",
+        "sa_id": "<from JWT sub>",
+        "customer_id": "<normalized stable id>",
+        "customer_display_name": "<raw>",
+        "turn": 0,
+        "ttl": 0
+      }
+    }
+  ],
+  "iam_policy_minimum": {
+    "ws_lambda_role": {
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem", "dynamodb:Query", "dynamodb:BatchWriteItem"
+          ],
+          "Resource": [
+            "arn:aws:dynamodb:<region>:<acct>:table/MfModAgent-CustomerMemory",
+            "arn:aws:dynamodb:<region>:<acct>:table/MfModAgent-WsConnections"
+          ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": ["execute-api:ManageConnections"],
+          "Resource": "arn:aws:execute-api:<region>:<acct>:<ws-api-id>/*/@connections/*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+          "Resource": [
+            "arn:aws:bedrock:<region>::foundation-model/anthropic.claude-*",
+            "arn:aws:bedrock:<region>:<acct>:inference-profile/*"
+          ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": ["bedrock-agent-runtime:Retrieve"],
+          "Resource": "arn:aws:bedrock:<region>:<acct>:knowledge-base/<kb-id>"
+        }
+      ]
+    }
+  }
+}

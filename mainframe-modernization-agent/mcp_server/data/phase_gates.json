@@ -1,0 +1,94 @@
+{
+  "_version": "2026-06-16.1",
+  "_description": "Gate definitions for analyze_phase_gaps. Mirrors CustomerProfile.derive_phase() (locked decision D2). Each phase lists the signals required to ADVANCE to the next phase; each signal names the profile field_paths it inspects and a curated FSI discovery question. Keep in sync with agent/customer_profile.py:derive_phase — the parity test enforces this.",
+  "_provenance": {
+    "last_reviewed": "2026-06-16",
+    "reviewed_by": "mainframe-modernization CoE",
+    "sources": [
+      {"label": "Engagement phase model (derive_phase)", "ref": "agent/customer_profile.py:derive_phase"}
+    ]
+  },
+  "phase_order": ["discovery", "assessment", "recommendation", "proposal", "execution"],
+  "_phase_rules_note": "Ordered, first-match-wins rules that reproduce CustomerProfile.derive_phase() EXACTLY — including its decision-driven shortcut branches (which can reach proposal/execution on decisions alone, bypassing workload/constraints). `all_of` signals must all hold; `any_of` (when present) requires at least one. The parity test asserts this matches derive_phase across many profiles.",
+  "phase_rules": [
+    {"phase": "execution",      "all_of": ["has_pattern", "has_partner"], "any_of": ["has_target", "ge3_active_decisions"]},
+    {"phase": "proposal",       "all_of": ["has_pattern"], "any_of": ["has_partner", "has_target"]},
+    {"phase": "proposal",       "all_of": ["workload_known", "constraints_known", "has_pattern"]},
+    {"phase": "recommendation", "all_of": ["workload_known", "constraints_known"]},
+    {"phase": "assessment",     "all_of": ["workload_known"]},
+    {"phase": "discovery",      "all_of": []}
+  ],
+  "signals": {
+    "workload_known": {
+      "description": "We know what is being modernized (workload shape captured).",
+      "any_of": [
+        "workload.num_cobol_programs",
+        "workload.num_jcl_jobs",
+        "workload.has_cics",
+        "workload.has_db2",
+        "workload.has_ims",
+        "workload.languages",
+        "workload.databases"
+      ],
+      "question": "To size the estate: roughly how many COBOL programs and JCL jobs, and which of CICS / DB2 / IMS / MQ are in play?",
+      "primary_field_path": "workload.num_cobol_programs"
+    },
+    "constraints_known": {
+      "description": "We know the regulatory / business envelope.",
+      "any_of": [
+        "constraints.regulations",
+        "constraints.target_date",
+        "constraints.budget_band",
+        "constraints.downtime_tolerance"
+      ],
+      "question": "What's the envelope — which regulators examine this estate (SOX/FFIEC/OCC/PCI?), any target date, budget band, or downtime tolerance?",
+      "primary_field_path": "constraints.regulations"
+    },
+    "has_pattern": {
+      "description": "A migration pattern (6R) has been chosen.",
+      "decision_category": "pattern",
+      "question": "Which migration pattern are we anchoring on — rehost, replatform, automated_refactor, refactor, or retire?",
+      "primary_field_path": "decisions_made[pattern]"
+    },
+    "has_partner": {
+      "description": "A partner / tool has been selected.",
+      "decision_category": "partner_tool",
+      "question": "Which partner or tool are we taking forward (Micro Focus, Blu Age, Heirloom, a GSI, …)? I can rank options if it's still open.",
+      "primary_field_path": "decisions_made[partner_tool]"
+    },
+    "has_target": {
+      "description": "Target service(s) / runtime chosen.",
+      "decision_category": ["target_service", "target_runtime"],
+      "question": "What are the target services / runtime (e.g. Aurora PostgreSQL for DB2, DynamoDB for VSAM, AWS M2 for CICS)? I can compare options per source component.",
+      "primary_field_path": "decisions_made[target_service]"
+    },
+    "ge3_active_decisions": {
+      "description": "Three or more active (non-superseded) decisions exist — proxy for an in-flight engagement (matches derive_phase's execution shortcut).",
+      "active_decision_count_gte": 3,
+      "question": "We have several decisions locked — what execution-level detail do you need next (wave sequencing, cutover, runbook)?",
+      "primary_field_path": "decisions_made"
+    }
+  },
+  "transitions": [
+    {
+      "from": "discovery",
+      "to": "assessment",
+      "requires": ["workload_known"]
+    },
+    {
+      "from": "assessment",
+      "to": "recommendation",
+      "requires": ["workload_known", "constraints_known"]
+    },
+    {
+      "from": "recommendation",
+      "to": "proposal",
+      "requires": ["workload_known", "constraints_known", "has_pattern"]
+    },
+    {
+      "from": "proposal",
+      "to": "execution",
+      "requires": ["has_pattern", "has_partner", "has_target"]
+    }
+  ]
+}

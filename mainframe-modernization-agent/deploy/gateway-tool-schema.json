@@ -1,0 +1,114 @@
+[
+  {
+    "name": "lookup_cobol_pattern",
+    "description": "Look up COBOL syntax patterns and examples by category (data_types, file_handling, program_structure, common_verbs).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "description": "Pattern category: data_types, file_handling, program_structure, common_verbs" },
+        "name":     { "type": "string", "description": "Specific pattern name to look up. Empty returns all entries in the category." }
+      },
+      "required": ["category"]
+    }
+  },
+  {
+    "name": "lookup_jcl_reference",
+    "description": "Look up JCL job control language reference by category (statements, common_utilities).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "description": "JCL category: statements, common_utilities" },
+        "name":     { "type": "string", "description": "Specific JCL element to look up. Empty returns all entries in the category." }
+      },
+      "required": ["category"]
+    }
+  },
+  {
+    "name": "map_mainframe_to_aws",
+    "description": "Map mainframe components to AWS service equivalents by category (compute, data, middleware, security, monitoring).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "description": "Mapping category: compute, data, middleware, security, monitoring" },
+        "name":     { "type": "string", "description": "Specific mainframe component (e.g. 'CICS', 'DB2', 'VSAM_KSDS', 'RACF', 'MQ_SERIES'). Empty returns all entries in the category." }
+      },
+      "required": ["category"]
+    }
+  },
+  {
+    "name": "get_migration_pattern",
+    "description": "Get mainframe migration pattern details (rehost, replatform, refactor, retire, automated_refactor) including steps, timeline, and FSI considerations.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Pattern name. Empty returns a summary of all patterns." }
+      }
+    }
+  },
+  {
+    "name": "estimate_complexity",
+    "description": "Estimate mainframe modernization complexity from workload characteristics. All inputs optional — when num_cobol_programs / num_jcl_jobs are missing the result is returned with confidence='low' and missing_inputs populated rather than as an error, so the agent can probe to firm up the estimate. Optional `profile` (CustomerProfile.to_dict()) auto-seeds inputs from the customer profile.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "num_cobol_programs": { "type": "integer", "description": "Number of COBOL programs" },
+        "num_jcl_jobs":       { "type": "integer", "description": "Number of JCL jobs" },
+        "has_cics":           { "type": "boolean", "description": "Whether the workload uses CICS" },
+        "has_db2":            { "type": "boolean", "description": "Whether the workload uses DB2" },
+        "has_ims":            { "type": "boolean", "description": "Whether the workload uses IMS" },
+        "has_mq":             { "type": "boolean", "description": "Whether the workload uses MQ Series" },
+        "num_vsam_files":     { "type": "integer", "description": "Number of VSAM files" },
+        "num_copybooks":      { "type": "integer", "description": "Number of shared copybooks" },
+        "profile":            { "type": "object", "description": "Optional CustomerProfile.to_dict(). When supplied, any input the SA didn't pass explicitly is seeded from the profile workload." }
+      }
+    }
+  },
+  {
+    "name": "get_fsi_compliance_check",
+    "description": "Get FSI regulatory compliance requirements for mainframe migration (SOX, PCI_DSS, FDIC, OCC, GLBA, FFIEC, FINRA_17a-4). Optional customer_profile_summary tailors the response.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "regulation":               { "type": "string", "description": "Regulation name. Empty returns a general overview." },
+        "customer_profile_summary": { "type": "string", "description": "Optional customer context to ground the response (workload, industry segment, decisions). Pass when a customer profile is bound." }
+      }
+    }
+  },
+  {
+    "name": "compare_partner_tools",
+    "description": "Rank mainframe modernization partner tools (Micro Focus, Blu Age, Heirloom, TCS, Astadia, etc.) for a given workload, pattern, and managed-service preference. Returns the top-N partners by fit, with strengths/weaknesses and FSI considerations.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "source_systems":           { "type": "array", "items": {"type": "string"}, "description": "Source mainframe systems in scope (e.g. ['COBOL','CICS','DB2','VSAM']). Empty matches any source." },
+        "pattern":                  { "type": "string", "description": "Migration pattern filter: rehost, replatform, refactor, automated_refactor, retire. Empty matches any pattern." },
+        "aws_m2_managed_only":      { "type": "boolean", "description": "If true, only return partners whose offering runs on AWS Mainframe Modernization Service (M2)." },
+        "top_n":                    { "type": "integer", "description": "How many partners to return. Defaults to 5." },
+        "customer_profile_summary": { "type": "string", "description": "Optional customer context to ground the recommendation. Pass when a customer profile is bound." }
+      }
+    }
+  },
+  {
+    "name": "compare_services",
+    "description": "Compare AWS target services for a given mainframe source component (e.g. CICS → ECS vs Lambda vs M2). Returns ranked candidates with fit and when-to-choose guidance.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "source":                   { "type": "string", "description": "Mainframe source component to compare AWS targets for (e.g. 'cics_online', 'db2_zos', 'vsam_ksds', 'ims_db', 'jcl_batch')." },
+        "candidates":               { "type": "array", "items": {"type": "string"}, "description": "Optional subset of AWS candidate services to consider. Empty considers all candidates." },
+        "customer_profile_summary": { "type": "string", "description": "Optional customer context to ground the recommendation. Pass when a customer profile is bound." }
+      },
+      "required": ["source"]
+    }
+  },
+  {
+    "name": "list_taxonomy",
+    "description": "Discover the argument shapes and category enums of every other tool. Use when you don't know what values 'category', 'pattern', 'regulation', or 'source' accept.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tool_name": { "type": "string", "description": "Specific tool to look up. Empty returns the taxonomy for all tools." }
+      }
+    }
+  }
+]

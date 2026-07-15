@@ -1,0 +1,11 @@
+# AWS Pricing MCP runtime dependencies.
+#
+# Pinned to versions verified 2026-07-07 against the awslabs upstream. The
+# awslabs package brings mcp, pydantic, boto3, and beautifulsoup4 as
+# transitive deps; we pin the top-level one only.
+#
+# On upstream bumps (they release ~weekly), re-verify with:
+#   pip install --upgrade awslabs.aws-pricing-mcp-server
+#   python -c "from awslabs.aws_pricing_mcp_server.server import mcp; print(mcp)"
+# then run local smoke against http://localhost:8000/mcp.
+awslabs.aws-pricing-mcp-server==1.0.31

@@ -1,0 +1,644 @@
+{
+  "target": "local",
+  "timestamp": "20260616-235034",
+  "elapsed_s": 507.6,
+  "totals": {
+    "pass": 25,
+    "fail": 0,
+    "n": 25
+  },
+  "results": [
+    {
+      "id": "pat-01",
+      "tag": "patterns",
+      "prompt": "Walk me through the major mainframe migration patterns and their trade-offs.",
+      "elapsed_s": 35.79,
+      "route_actual": "both",
+      "response_excerpt": "## Mainframe Migration Patterns & Trade-offs\n\nFive patterns are relevant for FSI mainframe engagements. The right mix depends on workload characteristics, regulatory posture, and business appetite for risk.\n\n---\n\n### Pattern Comparison\n\n| Pattern | Complexity | Timeline | Infra Cost Reduction | Best Fit |\n|---|---|---|---|---|\n| Rehost | Low | 3\u20136 mo/app | 20\u201340% | Capacity relief, fast exit from ",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', 'Doc 1', 'Doc 2'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly covers all four required patterns: rehost (Pattern 1), replatform (Pattern 2), refactor (Pattern 3), and retire (Pattern 5)."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response speaks in generic, advisory terms throughout and does not assert any specific customer's workload size, vendor choices, regulatory decisions, or target dates."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "pat-02",
+      "tag": "patterns",
+      "prompt": "For a Cards workload that's regulated under PCI-DSS and FFIEC, which migration pattern would you lean toward?",
+      "elapsed_s": 38.66,
+      "route_actual": "both",
+      "response_excerpt": "## Recommended Pattern: Automated Refactor (AI-Assisted) \u2014 with a Phased Wave Structure\n\nFor JPMC Cards at 40,000 MIPS / 800 COBOL programs under PCI-DSS and FFIEC, **automated refactor using AWS Blu Age** is the right directional recommendation \u2014 but it needs to be structured as a risk-tiered wave plan, not a single-pass migration. Here's the reasoning.\n\n---\n\n## Pattern Comparison\n\n| Pattern | Ti",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', '[Doc'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_end_with_probe": {
+          "verdict": "PASS",
+          "reason": "probe present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly mentions both 'replatform' and 'refactor' multiple times throughout the pattern comparison table and narrative sections."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "part-01",
+      "tag": "partners",
+      "prompt": "Compare the major mainframe modernization partners \u2014 Micro Focus, Blu Age, Heirloom, TCS, Deloitte. Strengths and where each fits.",
+      "elapsed_s": 32.79,
+      "route_actual": "both",
+      "response_excerpt": "## Mainframe Modernization Partner Comparison\n\nNote: TCS and Deloitte are SI/delivery partners rather than tooling vendors \u2014 I'll cover them separately below. The tool comparison ran across the tooling vendors; scores reflect a generic (no customer filters applied) ranking.\n\n---\n\n## Tooling Vendors\n\n| Criterion | Micro Focus Enterprise Server (OpenText) | AWS Blu Age | Heirloom |\n|---|---|---|---|",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_end_with_probe": {
+          "verdict": "PASS",
+          "reason": "probe present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly covers Micro Focus, Blu Age, and Heirloom as tooling vendors with dedicated sections for each."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response explicitly notes no customer is bound and discusses all partners generically without asserting any specific customer workload, vendor, regulation, or decision."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "part-02",
+      "tag": "partners",
+      "prompt": "What does Blu Age do that Micro Focus doesn't?",
+      "elapsed_s": 26.98,
+      "route_actual": "both",
+      "response_excerpt": "## Blu Age vs. Micro Focus Enterprise Server \u2014 Key Differentiators\n\nThese two tools solve fundamentally different problems. The choice between them is really a choice of **modernization pattern**, not just tooling.\n\n---\n\n### Pattern Difference (the core distinction)\n\n| Dimension | AWS Blu Age | Micro Focus Enterprise Server |\n|---|---|---|\n| **Pattern** | Automated refactor | Rehost / replatform |",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', '[Doc'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly references 'Blu Age', 'Micro Focus', and 'refactor' (including 'automated refactor' and 'refactoring') throughout."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response discusses patterns and tradeoffs generically without asserting any specific customer's workload size, vendor relationships, regulatory obligations, or decisions, and explicitly notes 'no customer is bound yet'."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "map-01",
+      "tag": "components",
+      "prompt": "Map CICS, DB2, VSAM, IMS, MQ, and RACF to AWS service equivalents.",
+      "elapsed_s": 31.16,
+      "route_actual": "both",
+      "response_excerpt": "## Mainframe-to-AWS Service Mapping\n\nSince no customer is bound, this is a generic FSI reference mapping. Specifics (e.g., transaction volumes, RACF policy complexity, IMS segment depth) will sharpen recommendations once a customer is in scope.\n\n---\n\n### Transaction & Integration Layer\n\n| Mainframe Component | Role | Primary AWS Target | Alternate | Key FSI Considerations |\n|---|---|---|---|---|\n|",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', '[Doc'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "All eight required terms are explicitly present: CICS, DB2, VSAM, IMS, RACF, Aurora, S3, and IAM each appear in the response."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response explicitly notes no customer is bound and frames all content as generic FSI reference mapping without asserting any customer-specific workload sizes, vendors, regulations, or decisions."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "map-02",
+      "tag": "components",
+      "prompt": "What replaces JCL in an AWS-native architecture?",
+      "elapsed_s": 31.09,
+      "route_actual": "both",
+      "response_excerpt": "## JCL Replacement in AWS-Native Architecture\n\nJCL serves three distinct functions that decompose into separate AWS services. The mapping isn't 1:1 \u2014 it's 1:many.\n\n---\n\n### Functional Decomposition\n\n| JCL Construct | Function | AWS-Native Replacement |\n|---|---|---|\n| `JOB` statement | Job identity, scheduling class, priority | **AWS Batch** job definition + **EventBridge Scheduler** |\n| `EXEC PGM",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', '[Doc'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly references JCL, Step Functions, EventBridge (Scheduler), and AWS Batch throughout the answer."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response makes no assertions about a specific customer's workload size, vendors, regulations, or decisions, and explicitly acknowledges no customer is bound yet."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "comp-01",
+      "tag": "compliance",
+      "prompt": "Tell me about FFIEC and how it shapes a mainframe modernization plan.",
+      "elapsed_s": 42.12,
+      "route_actual": "both",
+      "response_excerpt": "## FFIEC and Mainframe Modernization\n\nThe Federal Financial Institutions Examination Council (FFIEC) doesn't regulate mainframes directly, but its guidance creates hard constraints that shape *how* you can modernize \u2014 particularly around operational resilience, change management, and third-party risk. Here's how it maps to a modernization program.\n\n---\n\n## Key FFIEC Guidance Areas That Matter\n\n###",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', '[Doc'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly references FFIEC throughout, mentions 'examination' and 'examiners' repeatedly, covers BCP/business continuity in a dedicated section, and addresses risk management including third-party risk management and model risk management."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response speaks generically about institutions and modernization patterns without asserting any specific customer's workloads, vendors, decisions, or timelines, and explicitly notes 'no customer is bound yet' at the end."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "comp-02",
+      "tag": "compliance",
+      "prompt": "Summarize SOX, PCI-DSS, FDIC, OCC, GLBA, FFIEC, and DORA in one sentence each, focused on mainframe modernization implications.",
+      "elapsed_s": 19.55,
+      "route_actual": "both",
+      "response_excerpt": "## FSI Regulatory Quick Reference \u2014 Mainframe Modernization Implications\n\n| Regulation | One-Sentence Modernization Implication |\n|---|---|\n| **SOX** | Publicly traded institutions must preserve unbroken audit trails, provable data integrity, and documented change controls throughout any migration of financial reporting systems. |\n| **PCI-DSS** | Any modernization touching cardholder data must mai",
+      "verdicts": {
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', '[Doc'] present"
+        },
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "All seven regulations \u2014 SOX, PCI-DSS, FDIC, OCC, GLBA, FFIEC, and DORA \u2014 are explicitly named and addressed with modernization-focused summaries."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response makes no assertions about any specific customer's workloads, vendors, decisions, or timelines; all statements are generic and the closing question solicits customer context rather than assuming it."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "defer-01",
+      "tag": "defer",
+      "prompt": "not now",
+      "elapsed_s": 0.36,
+      "route_actual": "defer",
+      "response_excerpt": "Got it \u2014 I'll set that aside.\n\n_Dropped: The wave structure above assumes Wave 1 can be seeded with batch-only programs \u2014 but that assumption is load-bearing...._\n\nWhat would you like to focus on instead?",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='defer'"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "35 words (cap 40)"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', 'To advance:'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "defer-02",
+      "tag": "defer",
+      "prompt": "na, not sure on that",
+      "elapsed_s": 0.15,
+      "route_actual": "defer",
+      "response_excerpt": "Got it \u2014 I'll set that aside.\n\n_Dropped: The open question about CICS-online vs. batch JCL split is even more load-bearing now at 50K MIPS \u2014 do you have any s..._\n\nWhat would you like to focus on instead?",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='defer'"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "39 words (cap 40)"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', 'To advance:', 'Hi \u2014'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "defer-03",
+      "tag": "defer",
+      "prompt": "skip",
+      "elapsed_s": 0.22,
+      "route_actual": "defer",
+      "response_excerpt": "Got it \u2014 moving on. What would you like to focus on?",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='defer'"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "12 words (cap 40)"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', 'To advance:'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "sub-01",
+      "tag": "substantive-short",
+      "prompt": "strategic",
+      "elapsed_s": 43.12,
+      "route_actual": "kb",
+      "response_excerpt": "## Strategic Recommendation: JPMC Cards Mainframe Modernization\n\n---\n\n### Situation Summary\n\n| Dimension | Detail |\n|---|---|\n| Workload | 40,000 MIPS / 800 COBOL programs |\n| Segment | Cards (high-throughput, latency-sensitive) |\n| Regulatory | PCI-DSS, FFIEC |\n| Scale tier | Large enterprise \u2014 top ~5% of mainframe footprints |\n\nAt 40,000 MIPS, this is not a lift-and-shift conversation. This is a",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='kb'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['Hi \u2014', 'what would you like to dig into', '[KB]', '[MCP'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "sub-02",
+      "tag": "substantive-short",
+      "prompt": "no it is a long term plan",
+      "elapsed_s": 38.0,
+      "route_actual": "kb",
+      "response_excerpt": "## Migration Pattern Comparison for JPMC Cards (40K MIPS, 800 COBOL Programs)\n\nGiven a long-horizon engagement, the pattern selection decision carries more weight \u2014 you have runway to do this right rather than fast. Here's how the three primary patterns stack up against the JPMC Cards profile:\n\n---\n\n### Pattern Comparison Matrix\n\n| Dimension | Rehost (MMA/zEDC) | Replatform (Blu Age) | Refactor (C",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='kb'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['Hi \u2014', 'Got it \u2014 moving on', '[KB]', '[MCP'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "ack-01",
+      "tag": "acknowledge",
+      "prompt": "thanks",
+      "elapsed_s": 0.09,
+      "route_actual": "acknowledge",
+      "response_excerpt": "Acknowledged.",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='acknowledge'"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "1 words (cap 12)"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', 'To advance:'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "chat-01",
+      "tag": "chat",
+      "prompt": "hi",
+      "elapsed_s": 0.0,
+      "route_actual": "direct",
+      "response_excerpt": "Hi \u2014 what would you like to dig into?",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='direct'"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "9 words (cap 40)"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of [\"I'm your mainframe modernization assistant\", 'Mainframe Modernization Sherpa \u2014 your AWS', '[KB]', '[MCP'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "help-01",
+      "tag": "meta",
+      "prompt": "what can you do",
+      "elapsed_s": 2.25,
+      "route_actual": "help",
+      "response_excerpt": "**Mainframe Modernization Sherpa** \u2014 your AWS Solutions Architect co-pilot for Financial Services mainframe modernization.\n\nWhat I can help with:\n- **Assessment** \u2014 workload sizing, complexity scoring, pattern selection\n- **Migration patterns** \u2014 rehost / replatform / refactor / retire / automated_refactor\n- **Partner & tool comparison** \u2014 Micro Focus, Blu Age, Heirloom, TCS, Deloitte, etc.\n- **AW",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='help'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP'] present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly mentions Assessment, Migration patterns, Partner & tool comparison, and FSI compliance as distinct capability areas."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "sum-01",
+      "tag": "summary",
+      "prompt": "what do you know",
+      "elapsed_s": 2.15,
+      "route_actual": "summary",
+      "response_excerpt": "### What I know about **fidelity / cards**\n\n_Nothing yet \u2014 engagement phase: **discovery**._\n\nTell me a bit about the customer (workload size, regulations, target date) and I'll start building a profile.",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='summary'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', \"I don't have a customer profile loaded\"] present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly references 'fidelity' in the heading 'What I know about **fidelity / cards**'."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "sum-02",
+      "tag": "summary",
+      "prompt": "where are we",
+      "elapsed_s": 2.23,
+      "route_actual": "summary",
+      "response_excerpt": "### What I know about **jpmc**\n\n_Customer-wide view across 1 Line of Business._\n\n#### cards\n\n**Segment:** cards\n\n**Workload:**\n- 40,000 MIPS\n- 800 COBOL programs\n\n**Constraints:**\n- Regulations: PCI_DSS, FFIEC, PCI_DSS, FFIEC, PCI_DSS, FFIEC, PCI_DSS, FFIEC, PCI_DSS, FFIEC, PCI_DSS, FFIEC\n\n**Open questions queued for next turn:**\n- Has JPMC Cards done any application portfolio analysis (APA) on th",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='summary'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP'] present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly references 'jpmc' and 'JPMC' multiple times throughout the reply."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "unbound-01",
+      "tag": "unbound",
+      "prompt": "What's a good first set of discovery questions for a mainframe modernization engagement?",
+      "elapsed_s": 35.13,
+      "route_actual": "both",
+      "response_excerpt": "## Discovery Question Framework \u2014 Mainframe Modernization\n\nSince no customer is bound yet, here's a structured set of discovery questions organized by priority. The goal in early discovery is to qualify the opportunity, understand constraints, and avoid pattern-matching too early.\n\n---\n\n### Tier 1 \u2014 Qualify the Opportunity (Ask These First)\n\nThese determine whether you're in a real engagement and ",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['[KB]', '[MCP', 'set Highlight as the customer', 'switch context', 'NONE BOUND', 'Would you like to set'] present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The response explicitly references MIPS (Q5), CICS (Q7), DB2 (Q8), and regulatory frameworks (Q11\u2013Q15), satisfying all four required terms."
+        },
+        "no_customer_specific_claims": {
+          "verdict": "PASS",
+          "reason": "The response is entirely generic and hypothetical, presenting a reusable discovery framework without asserting any specific customer's workload size, vendor relationships, regulatory status, or decisions."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "unbound-02",
+      "tag": "unbound",
+      "prompt": "Highlight the FSI-specific considerations of the AWS Well-Architected Framework.",
+      "elapsed_s": 37.68,
+      "route_actual": "kb",
+      "response_excerpt": "## AWS Well-Architected Framework: FSI-Specific Considerations\n\nThe six pillars each carry distinct weight in financial services. Here's how they manifest in practice for FSI mainframe modernization contexts.\n\n---\n\n### Operational Excellence\n\n| FSI Concern | Implication |\n|---|---|\n| Change management rigor | FSI orgs typically require CAB approval, audit trails for every production change \u2014 CI/CD",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='kb'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['set Highlight as the customer', '[KB]', '[MCP'] present"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "All six pillars are explicitly referenced as section headers and discussed in detail: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, and Sustainability."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "extract-01",
+      "tag": "extraction",
+      "prompt": "They have 40K MIPS and roughly 800 COBOL programs.",
+      "elapsed_s": 33.08,
+      "route_actual": "mcp",
+      "response_excerpt": "## Sizing Reality Check: 40K MIPS / 800 COBOL Programs\n\nThis is a large, complex estate. Let me frame what that means for pattern selection before recommending a path.\n\n---\n\n## What 40K MIPS Tells Us\n\n40K MIPS is a **tier-1 mainframe footprint** \u2014 comparable to a mid-size card processing core at a major bank. For context:\n\n| MIPS Range | Typical Profile | Migration Complexity |\n|---|---|---|\n| < 5",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='mcp'"
+        },
+        "persisted_facts": {
+          "verdict": "PASS",
+          "reason": "all 2 expected facts present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "extract-02",
+      "tag": "extraction",
+      "prompt": "Compare AWS Mainframe Modernization Service to Blu Age refactoring.",
+      "elapsed_s": 32.38,
+      "route_actual": "both",
+      "response_excerpt": "## AWS M2 Managed Runtime vs. Blu Age Refactoring \u2014 What's Actually Different\n\nThese are two distinct value propositions within the AWS M2 umbrella, not competing alternatives. The confusion is common. Here's the breakdown:\n\n---\n\n### Conceptual Distinction\n\n| Dimension | AWS M2 + Micro Focus (Managed Runtime) | AWS M2 + Blu Age (Automated Refactor) |\n|---|---|---|\n| **What it does** | Emulates z/O",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='both'"
+        },
+        "persisted_facts": {
+          "verdict": "PASS",
+          "reason": "all 0 expected facts present"
+        },
+        "persisted_decisions": {
+          "verdict": "PASS",
+          "reason": "no decisions persisted (correct)"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of ['confirmed', \"you've selected\", 'you have committed'] present"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "contradict-01",
+      "tag": "extraction",
+      "prompt": "Actually they're at 50K MIPS, not 40K.",
+      "elapsed_s": 19.58,
+      "route_actual": "kb",
+      "response_excerpt": "Updating the workload to **50,000 MIPS**. That's a meaningful delta \u2014 it shifts the rehost-first calculus and infrastructure sizing.\n\n## Revised Sizing Implications at 50K MIPS\n\n| Dimension | 40K MIPS (prior) | 50K MIPS (revised) | Impact |\n|---|---|---|---|\n| EC2 rehost footprint (z/OS on Mainframe on AWS or emulation) | ~8\u201310 x z1d.metal class | ~10\u201313 x z1d.metal class | +25% capacity, +cost | ",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='kb'"
+        },
+        "contradiction_surfaced": {
+          "verdict": "PASS",
+          "reason": "contradiction surfaced for workload.mips_capacity"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "intro-01",
+      "tag": "branding",
+      "prompt": "hello",
+      "elapsed_s": 0.01,
+      "route_actual": "direct",
+      "response_excerpt": "Hi \u2014 what would you like to dig into?",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='direct'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of [\"I'm your mainframe modernization assistant\", 'FSI Modernization Sherpa', 'Useful commands', '[KB]', '[MCP'] present"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "9 words (cap 40)"
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    },
+    {
+      "id": "customer-bound-greeting",
+      "tag": "branding",
+      "prompt": "hi",
+      "elapsed_s": 2.98,
+      "route_actual": "direct",
+      "response_excerpt": "Hi \u2014 what would you like to dig into for **jpmc / cards**?",
+      "verdicts": {
+        "expected_route": {
+          "verdict": "PASS",
+          "reason": "route='direct'"
+        },
+        "must_avoid": {
+          "verdict": "PASS",
+          "reason": "none of [\"I'm your mainframe modernization assistant\", '[KB]', '[MCP'] present"
+        },
+        "max_response_words": {
+          "verdict": "PASS",
+          "reason": "13 words (cap 40)"
+        },
+        "must_mention": {
+          "verdict": "PASS",
+          "reason": "The agent explicitly references 'jpmc' in its response."
+        },
+        "overall": "PASS"
+      },
+      "overall": "PASS"
+    }
+  ]
+}

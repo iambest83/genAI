@@ -1,0 +1,55 @@
+{
+  "_version": "2026-06-16.1",
+  "_description": "Externalized weights + rubrics for compare_services. Replaces the hardcoded fit_rank dict that used to live in server.py. Each criterion scores 0..1; the engine normalizes weights to sum to 1.",
+  "_provenance": {
+    "last_reviewed": "2026-06-16",
+    "reviewed_by": "mainframe-modernization CoE — data & platform team",
+    "sources": [
+      {"label": "Target-service selection rubric", "ref": "internal-target-rubric"}
+    ]
+  },
+  "weight_profiles": {
+    "default": {
+      "fit": 0.55,
+      "ops_burden": 0.20,
+      "latency_fit": 0.25
+    },
+    "low_latency_first": {
+      "latency_fit": 0.45,
+      "fit": 0.40,
+      "ops_burden": 0.15
+    },
+    "ops_light_first": {
+      "ops_burden": 0.40,
+      "fit": 0.40,
+      "latency_fit": 0.20
+    }
+  },
+  "rubrics": {
+    "fit": {
+      "_note": "Curated suitability rank, 0..1. Replaces the old magic fit_rank dict.",
+      "high": 1.0,
+      "high_if_redesigned": 0.75,
+      "medium": 0.5,
+      "case_by_case": 0.5,
+      "low": 0.25,
+      "low_for_OLTP": 0.25,
+      "_default": 0.25
+    },
+    "ops_burden": {
+      "_note": "Source field is 1 (managed) .. 5 (heavy). Inverted + normalized so lower burden scores higher.",
+      "_scale_max": 5
+    },
+    "latency_fit": {
+      "_note": "Scored against the customer's downtime/latency posture. base scores by latency_class; up-weighted when a low-latency need is declared.",
+      "base": {
+        "oltp_low": 1.0,
+        "oltp_moderate": 0.7,
+        "messaging": 0.7,
+        "analytical": 0.5
+      },
+      "_default": 0.5
+    }
+  },
+  "neutral_prior": 0.5
+}

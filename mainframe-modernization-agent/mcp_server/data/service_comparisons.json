@@ -1,0 +1,268 @@
+{
+  "_version": "2026-07-08.2",
+  "_provenance": {
+    "last_reviewed": "2026-06-16",
+    "reviewed_by": "mainframe-modernization CoE — data & platform team",
+    "sources": [
+      {"label": "AWS service documentation", "ref": "aws-docs"},
+      {"label": "FSI target-architecture reference patterns", "ref": "internal-target-ref"}
+    ]
+  },
+  "_field_notes": {
+    "fit": "Curated suitability of the target for this source component.",
+    "latency_class": "oltp_low (<10ms) | oltp_moderate | analytical (sec+) | messaging — factual service property.",
+    "ops_burden": "1=fully managed/serverless .. 5=self-managed heavy — factual service property."
+  },
+  "comparisons": {
+    "vsam_ksds": {
+      "source": "VSAM KSDS",
+      "description": "Keyed record file with single-key access patterns",
+      "candidates": {
+        "DynamoDB": {
+          "fit": "high",
+          "latency_class": "oltp_low",
+          "ops_burden": 1,
+          "when_to_choose": "Single-key or key+sort access; sub-10ms latency; scale beyond one-region write ceiling",
+          "caveats": "Secondary indexes cost extra; no JOINs; requires access-pattern redesign",
+          "fsi_notes": "Point-in-time recovery, KMS-at-rest, Streams for audit are standard. Good SOX/FFIEC posture."
+        },
+        "Aurora_PostgreSQL": {
+          "fit": "medium",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "Need ad-hoc queries, JOINs, or want to consolidate VSAM+DB2",
+          "caveats": "Higher baseline latency than DynamoDB; vertical-scale ceiling",
+          "fsi_notes": "Familiar relational control model; easier to map SOX change-control."
+        },
+        "S3_plus_Athena": {
+          "fit": "medium",
+          "latency_class": "analytical",
+          "ops_burden": 1,
+          "when_to_choose": "Archival / warm analytical access; low write volume",
+          "caveats": "Not OLTP; seconds-to-minutes latency",
+          "fsi_notes": "Object Lock + Versioning give strong retention evidence."
+        },
+        "Keyspaces": {
+          "fit": "low",
+          "latency_class": "oltp_low",
+          "ops_burden": 2,
+          "when_to_choose": "Only if team already has Cassandra skills",
+          "caveats": "Smaller ecosystem; limited multi-region semantics",
+          "fsi_notes": "Acceptable but less common in FSI."
+        }
+      }
+    },
+    "vsam_esds_flat_sequential": {
+      "source": "VSAM ESDS / QSAM flat files",
+      "description": "Entry-sequenced or sequential flat files",
+      "candidates": {
+        "S3": {
+          "fit": "high",
+          "latency_class": "analytical",
+          "ops_burden": 1,
+          "when_to_choose": "Default choice; flat-file semantics map cleanly",
+          "caveats": "Design object-key schema carefully to avoid hot partitions",
+          "fsi_notes": "Object Lock + CloudTrail data events give strong audit trail."
+        },
+        "EFS": {
+          "fit": "low",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "Only if lift-and-shift with POSIX filesystem assumption",
+          "caveats": "Expensive at scale; rarely the right long-term answer",
+          "fsi_notes": "Possible but unusual in FSI migrations."
+        }
+      }
+    },
+    "db2_zos": {
+      "source": "DB2 for z/OS",
+      "description": "Relational OLTP database",
+      "candidates": {
+        "Aurora_PostgreSQL": {
+          "fit": "high",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "Default; best tooling via AWS SCT + DMS",
+          "caveats": "Stored procedures and triggers need translation (PL/pgSQL); some DB2 numeric types need mapping",
+          "fsi_notes": "Mature FSI footprint; supports IAM-based DB auth, KMS, CloudTrail, enhanced monitoring."
+        },
+        "Aurora_MySQL": {
+          "fit": "medium",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "Team has strong MySQL preference",
+          "caveats": "Less feature parity with DB2 than Postgres (e.g., window functions, types)",
+          "fsi_notes": "Acceptable; fewer FSI reference patterns than Postgres."
+        },
+        "RDS_Oracle": {
+          "fit": "medium",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 3,
+          "when_to_choose": "Customer already has Oracle licensing and wants minimal re-work",
+          "caveats": "License cost; long-term cloud-nativeness limited",
+          "fsi_notes": "Familiar control surface; often used as a staging step."
+        },
+        "Redshift": {
+          "fit": "low_for_OLTP",
+          "latency_class": "analytical",
+          "ops_burden": 2,
+          "when_to_choose": "Only for analytics offload, not OLTP",
+          "caveats": "Not a transactional engine",
+          "fsi_notes": "Use alongside Aurora for regulatory reporting workloads."
+        }
+      }
+    },
+    "ims_db": {
+      "source": "IMS-DB (hierarchical)",
+      "description": "Hierarchical database",
+      "candidates": {
+        "DynamoDB": {
+          "fit": "high_if_redesigned",
+          "latency_class": "oltp_low",
+          "ops_burden": 1,
+          "when_to_choose": "If willing to remodel hierarchy as document/key-value",
+          "caveats": "Major data-model rework; joins have to move to application",
+          "fsi_notes": "Clean AWS-native control surface."
+        },
+        "Aurora_PostgreSQL_with_JSONB": {
+          "fit": "medium",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "If hierarchy maps naturally to nested JSON",
+          "caveats": "Performance can be acceptable but requires careful index design",
+          "fsi_notes": "Easier to map existing SOX controls."
+        },
+        "Neptune": {
+          "fit": "medium",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "If relationships are graph-like, not tree-like",
+          "caveats": "Skill availability; niche ecosystem",
+          "fsi_notes": "Rare in FSI today."
+        }
+      }
+    },
+    "cics_online": {
+      "source": "CICS transaction processor",
+      "description": "Online transaction processing (OLTP) runtime",
+      "candidates": {
+        "Rocket_Enterprise_Server_on_EC2": {
+          "fit": "high",
+          "latency_class": "oltp_low",
+          "ops_burden": 3,
+          "when_to_choose": "Rehost/replatform — preserve transaction semantics. Featured AWS replatform partner per 2025-12-12 blog.",
+          "caveats": "Carries monolith shape forward. AWS M2 Managed Runtime (Micro Focus/Rocket flavor) closed to new customers 2025-11-07 — must self-manage on EC2 or use partner-managed runtime.",
+          "fsi_notes": "Rocket has deep FSI relationships from the acquired Micro Focus book. Familiar audit evidence pattern."
+        },
+        "AWS_Transform_for_mainframe_output": {
+          "fit": "high",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "Automated Refactor — deterministic COBOL/CICS → Java (Spring Boot) on ECS/Fargate via AWS Transform. GA 2025-05-15. Blu Age technology under the hood.",
+          "caveats": "Regression surface larger than rehost; Functional Equivalence Testing required. Human-in-the-Loop validation gate required per AWS guidance.",
+          "fsi_notes": "Inherits AWS-native controls (IAM, KMS, CloudTrail) post-refactor. Aligned to DORA operational-resilience evidence."
+        },
+        "AWS_Transform_plus_Claude_Code_reimagine": {
+          "fit": "high_for_transformation",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 2,
+          "when_to_choose": "Reimagine — reverse-engineer CICS transactions into business rules with AWS Transform, then forward-engineer as microservices with Claude Code. Best when the target must be event-driven / API-first, not just cloud-hosted. See 2026-05-08 blog.",
+          "caveats": "18-36+ months. Requires business appetite for architecture change. Domain-decomposition errors compound; SME review of AI-generated specs is mandatory.",
+          "fsi_notes": "Best-in-class transformation opportunity. Structured business rules (Given/When/Then) outlive retiring SMEs — genuine institutional-knowledge preservation."
+        },
+        "AWS_M2_MicroFocus_existing_only": {
+          "fit": "existing_customers_only",
+          "latency_class": "oltp_low",
+          "ops_burden": 2,
+          "when_to_choose": "ONLY for existing AWS M2 Managed Runtime customers. Closed to new customers 2025-11-07.",
+          "caveats": "Not available for new engagements. For new-customer rehost, use Rocket_Enterprise_Server_on_EC2.",
+          "fsi_notes": "Existing FSI customers can continue; new ones must plan for self-managed or partner-managed."
+        },
+        "ECS_Fargate_custom_rewrite": {
+          "fit": "medium",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 3,
+          "when_to_choose": "Greenfield rewrite without AWS Transform — highest ceiling, highest cost. Generally superseded by AWS_Transform_plus_Claude_Code_reimagine for structured outcomes.",
+          "caveats": "18-36+ months; only justified when AWS Transform doesn't fit the source characteristics",
+          "fsi_notes": "Full control of modern stack; biggest transformation opportunity."
+        },
+        "API_Gateway_plus_Lambda": {
+          "fit": "case_by_case",
+          "latency_class": "oltp_moderate",
+          "ops_burden": 1,
+          "when_to_choose": "For lightweight, stateless transactions after decomposition (post-reimagine target-side pattern)",
+          "caveats": "Cold-start sensitivity for strict latency SLAs",
+          "fsi_notes": "Good for customer-facing API front door."
+        }
+      }
+    },
+    "jcl_batch": {
+      "source": "JCL batch schedule",
+      "description": "Batch job scheduling and dependency management",
+      "candidates": {
+        "AWS_Batch_plus_EventBridge_Scheduler": {
+          "fit": "high",
+          "latency_class": "analytical",
+          "ops_burden": 2,
+          "when_to_choose": "Default for refactored batch",
+          "caveats": "Dependency DAGs must be re-expressed (Step Functions or scheduler dependencies)",
+          "fsi_notes": "CloudTrail + Step Functions history give strong audit evidence."
+        },
+        "MWAA_Airflow": {
+          "fit": "high",
+          "latency_class": "analytical",
+          "ops_burden": 3,
+          "when_to_choose": "Complex DAGs, data-pipeline-heavy",
+          "caveats": "Ops overhead; team must learn Airflow",
+          "fsi_notes": "Python-heavy; custom audit logging needed."
+        },
+        "Control_M_on_EC2": {
+          "fit": "medium",
+          "latency_class": "analytical",
+          "ops_burden": 4,
+          "when_to_choose": "Customer already uses Control-M; keeps scheduler parity",
+          "caveats": "License continuation; lift-and-shift value only",
+          "fsi_notes": "Minimal control-mapping change."
+        }
+      }
+    },
+    "mq_series": {
+      "source": "IBM MQ Series",
+      "description": "Enterprise messaging",
+      "candidates": {
+        "Amazon_MQ_RabbitMQ": {
+          "fit": "high",
+          "latency_class": "messaging",
+          "ops_burden": 2,
+          "when_to_choose": "Need AMQP semantics similar to MQ",
+          "caveats": "Different operational model than classic MQ",
+          "fsi_notes": "Managed broker; IAM + VPC isolation."
+        },
+        "Amazon_MQ_ActiveMQ": {
+          "fit": "high",
+          "latency_class": "messaging",
+          "ops_burden": 2,
+          "when_to_choose": "JMS-heavy environments",
+          "caveats": "Legacy semantics; limited modern tooling",
+          "fsi_notes": "Acceptable for brownfield migration."
+        },
+        "MSK_Kafka": {
+          "fit": "medium",
+          "latency_class": "messaging",
+          "ops_burden": 3,
+          "when_to_choose": "Streaming event-driven target state",
+          "caveats": "Not a drop-in replacement; design rework required",
+          "fsi_notes": "Strong at high volume; requires explicit retention policies for compliance."
+        },
+        "SQS_plus_SNS": {
+          "fit": "case_by_case",
+          "latency_class": "messaging",
+          "ops_burden": 1,
+          "when_to_choose": "Point-to-point and fan-out with simple semantics",
+          "caveats": "Not a full message-broker replacement",
+          "fsi_notes": "Simple audit via CloudTrail."
+        }
+      }
+    }
+  }
+}

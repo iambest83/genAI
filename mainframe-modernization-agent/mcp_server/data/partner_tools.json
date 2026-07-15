@@ -1,0 +1,326 @@
+{
+  "_version": "2026-07-09.1",
+  "_provenance": {
+    "last_reviewed": "2026-07-09",
+    "reviewed_by": "mainframe-modernization CoE — partner team; audit against AWS Migration & Modernization + APN blog posts 2020-2026. Added reference_urls[] per tool with verified canonical URLs from KB frontmatter.",
+    "sources": [
+      {"label": "AWS Mainframe Modernization partner directory", "ref": "internal-partner-directory"},
+      {"label": "FSI partner engagement retros (2024-2026)", "ref": "internal-partner-retro"},
+      {"label": "AWS blog: Mainframe Replatform with Rocket Software (2025-12-12)", "ref": "https://aws.amazon.com/blogs/migration-and-modernization/mainframe-replatform-best-practices-with-rocket-software-on-aws/"},
+      {"label": "AWS blog: AWS Transform GA (2025-05-15)", "ref": "https://aws.amazon.com/blogs/migration-and-modernization/aws-transform-generally-available/"},
+      {"label": "AWS blog: Reimagining with AWS Transform + Claude Code (2026-05-08)", "ref": "https://aws.amazon.com/blogs/migration-and-modernization/reimagining-mainframe-applications-with-aws-transform-and-claude-code/"}
+    ]
+  },
+  "tools": {
+    "rocket_enterprise_server": {
+      "name": "Rocket Enterprise Server (formerly Micro Focus Enterprise Server)",
+      "vendor": "Rocket Software",
+      "pattern": ["rehost", "replatform"],
+      "reference_urls": [
+        {"title": "Mainframe Replatform: Best Practices with Rocket Software on AWS (2025-12-12)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/mainframe-replatform-best-practices-with-rocket-software-on-aws/"},
+        {"title": "Proactive Rocket Software Licensing Daemon Management on AWS (2026-05-11)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/proactive-rocket-software-licensing-daemon-management-on-aws/"}
+      ],
+      "runtime": "Self-managed on EC2 / ECS / EKS. AWS M2 Managed Runtime (Micro Focus branding) is closed to new customers as of 2025-11-07 — existing customers only.",
+      "source_fit": ["COBOL", "CICS", "JCL", "VSAM", "Db2", "IMS TM"],
+      "strengths": [
+        "Highest-fidelity CICS/JCL emulation on AWS",
+        "AWS's featured replatform partner as of 2025-12-12 (per AWS blog)",
+        "Mature tooling; largest installed base among FSI",
+        "Supported via AWS-Rocket partnership: Solution Architecture & Design Documentation (SA&DD), Functional Design Specification (FDS), Migration Feasibility Assessment (MFA)"
+      ],
+      "weaknesses": [
+        "License cost scales with workload; can be high for large estates",
+        "Emulation preserves monolith shape — no path to cloud-native without additional refactor",
+        "New customers no longer eligible for AWS M2 Managed Runtime; must self-manage on EC2 or partner-managed"
+      ],
+      "fsi_considerations": "Well-accepted by FSI auditors; supports FIPS 140-2 cryptographic modules. Clear control mapping for SOX/FFIEC. Rocket has deep FSI relationships from the acquired Micro Focus book.",
+      "typical_timeline": "6-12 months",
+      "aws_m2_managed": false,
+      "cost_model": "license_workload_scaled",
+      "fsi_regulator_familiarity": 5,
+      "cloud_native_output": "none",
+      "vendor_ecosystem_size": 5,
+      "timeline_months_typical": 9,
+      "historical_note": "This entry was previously named 'Micro Focus Enterprise Server (OpenText)'. Rocket Software acquired the Micro Focus mainframe modernization business from OpenText in mid-2024. AWS's positioning shifted materially: the M2 Managed Runtime (Micro Focus flavor) closed to new customers 2025-11-07, and Rocket is now the featured replatform partner per the 2025-12-12 blog."
+    },
+    "aws_transform_for_mainframe": {
+      "name": "AWS Transform for mainframe",
+      "vendor": "AWS",
+      "pattern": ["automated_refactor", "reimagine"],
+      "reference_urls": [
+        {"title": "Transform Enterprise Workloads up to 4x Faster with Agentic AI — AWS Transform GA (2025-05-15)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/aws-transform-generally-available/"},
+        {"title": "Reimagining Mainframe Applications with AWS Transform and Claude Code (2026-05-08)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/reimagining-mainframe-applications-with-aws-transform-and-claude-code/"},
+        {"title": "Accelerate Mainframe Modernization with AWS Transform — A Comprehensive Refactor Approach (2025-12-22)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/accelerate-mainframe-modernization-with-aws-transform-a-comprehensive-refactor-approach/"},
+        {"title": "Agentic AI Meets PL/I — Modernizing Mainframes with AWS Transform (2026-04-10)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/agentic-ai-meets-pl-i-modernizing-mainframes-with-aws-transform/"}
+      ],
+      "runtime": "Runs on AWS; output targets Java (Spring Boot) + PostgreSQL / Groovy on ECS/Fargate or Lambda",
+      "source_fit": ["COBOL", "PL/I", "JCL", "CICS", "Db2", "VSAM", "BMS"],
+      "strengths": [
+        "GA since 2025-05-15; AWS-native billing and support",
+        "Agentic AI reverse-engineers business rules with Given/When/Then acceptance criteria",
+        "Two patterns supported: Automated Refactor (preserve monolith, modernize language) and Reimagine (decompose to microservices — pair with Claude Code for forward engineering)",
+        "Deterministic output for Refactor; agentic + HITL for Reimagine",
+        "Customer-reported metrics: Itaú ~90% time reduction on discovery, Visma ~55% annual cost savings, 4x faster than manual refactor"
+      ],
+      "weaknesses": [
+        "Newest product in the space (GA 2025-05-15) — smaller reference base than Rocket or Blu Age standalone",
+        "Reimagine pattern requires Claude Code as the forward-engineering companion — not a single-vendor solution",
+        "Very large portfolios (10M+ LOC) need decomposition strategy first — see 'Tackling large mainframe portfolio' blog for methodology"
+      ],
+      "fsi_considerations": "AWS-native controls (IAM, KMS, CloudTrail) apply to the transformation service itself and to the refactored output. FSI customers using PL/I (banking/insurance/public sector) get specific support per 2026-04-10 blog.",
+      "typical_timeline": "6-18 months (Refactor pattern); 18-36 months (Reimagine pattern with Claude Code)",
+      "aws_m2_managed": true,
+      "cost_model": "aws_native_billing",
+      "fsi_regulator_familiarity": 3,
+      "cloud_native_output": "cloud_native",
+      "vendor_ecosystem_size": 4,
+      "timeline_months_typical": 12,
+      "historical_note": "AWS Transform for mainframe consolidates the capability previously delivered as 'Amazon Q Developer Transform capability for mainframe' (re:Invent 2024 preview) which itself built on 'AWS Blu Age'. GA'd 2025-05-15 as one of three AWS Transform agents alongside .NET and VMware."
+    },
+    "aws_blu_age": {
+      "name": "AWS Blu Age (now part of AWS Transform for mainframe)",
+      "vendor": "AWS",
+      "pattern": ["automated_refactor"],
+      "reference_urls": [
+        {"title": "Automated Refactoring from Mainframe to Serverless Functions and Containers with AWS Blu Age (2020-02-11)", "url": "https://aws.amazon.com/blogs/apn/automated-refactoring-from-mainframe-to-serverless-functions-and-containers-with-blu-age/"},
+        {"title": "AWS Blu Age Code Maintainability (2025-01-30)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/aws-blu-age-code-maintainability/"},
+        {"title": "Automate the Building, Testing, and Deployment Processes of AWS Mainframe Modernization with AWS Blu Age (2024-09-27)", "url": "https://aws.amazon.com/blogs/migration-and-modernization/automate-the-building-testing-and-deployment-processes-of-aws-mainframe-modernization-with-aws-blu-age/"}
+      ],
+      "runtime": "AWS M2 Blu Age runtime (Java on ECS/Fargate) remains for existing workloads. New Blu Age transformation engagements route through AWS Transform for mainframe as of GA 2025-05-15.",
+      "source_fit": ["COBOL", "CICS", "JCL", "VSAM", "IDMS", "Natural/ADABAS"],
+      "strengths": [
+        "Automated COBOL-to-Java refactor; cloud-native output",
+        "AWS-owned; integrated billing and support",
+        "Blu Age *runtime* (Java on ECS/Fargate) remains the target-side execution environment for AWS-Transform-refactored code",
+        "Good for customers wanting long-term cloud-native posture"
+      ],
+      "weaknesses": [
+        "Standalone AWS Blu Age transformation is largely superseded by AWS Transform for mainframe (GA 2025-05-15)",
+        "Refactor adds risk vs rehost; regression surface is larger",
+        "Best fit for medium-complexity estates; very large estates need phased approach"
+      ],
+      "fsi_considerations": "Refactored Java code inherits AWS-native controls (IAM, KMS, CloudTrail). Useful for DORA operational-resilience evidence.",
+      "typical_timeline": "12-18 months",
+      "aws_m2_managed": true,
+      "cost_model": "product_license",
+      "fsi_regulator_familiarity": 4,
+      "cloud_native_output": "cloud_native",
+      "vendor_ecosystem_size": 4,
+      "timeline_months_typical": 15,
+      "historical_note": "AWS Blu Age was previously the standalone AWS-owned automated-refactor tool. Its transformation capability is now delivered via AWS Transform for mainframe (see the `aws_transform_for_mainframe` entry). The Blu Age runtime (Java target execution on ECS/Fargate) remains a legitimate target-side entry point."
+    },
+    "heirloom": {
+      "name": "Heirloom (Heirloom Computing)",
+      "vendor": "Heirloom Computing",
+      "pattern": ["automated_refactor"],
+      "reference_urls": [],
+      "runtime": "Java EE on any JVM (EKS, ECS, EC2)",
+      "source_fit": ["COBOL", "CICS", "VSAM"],
+      "strengths": [
+        "Fast compile-to-Java cycle; good dev-loop ergonomics",
+        "Runs on standard JVM; no runtime lock-in",
+        "Strong CICS BMS screen conversion"
+      ],
+      "weaknesses": [
+        "Smaller ecosystem / partner network",
+        "IMS coverage limited"
+      ],
+      "fsi_considerations": "Compatible with standard Java security frameworks; requires customer-built audit evidence since no AWS-managed runtime.",
+      "typical_timeline": "9-15 months",
+      "aws_m2_managed": false,
+      "cost_model": "product_license",
+      "fsi_regulator_familiarity": 3,
+      "cloud_native_output": "cloud_native",
+      "vendor_ecosystem_size": 2,
+      "timeline_months_typical": 12
+    },
+    "astadia": {
+      "name": "Astadia",
+      "vendor": "Astadia",
+      "pattern": ["automated_refactor", "replatform"],
+      "reference_urls": [
+        {"title": "Modernize Mainframe Workloads to AWS with Astadia Automated Refactoring (2022-07-13)", "url": "https://aws.amazon.com/blogs/apn/modernize-mainframe-workloads-to-aws-with-astadia-automated-refactoring/"}
+      ],
+      "runtime": "AWS / Azure (cloud-agnostic)",
+      "source_fit": ["COBOL", "Natural/ADABAS", "IDMS", "IMS"],
+      "strengths": [
+        "Deep Unisys and niche-mainframe experience",
+        "Strong on Natural/ADABAS and IDMS estates most partners avoid",
+        "Delivery-led; predictable outcomes"
+      ],
+      "weaknesses": [
+        "Partner-delivered rather than product-only — cost depends on engagement",
+        "Less AWS-native integration than Blu Age"
+      ],
+      "fsi_considerations": "Long track record with FSI clients; produces standard Java output auditable with AWS controls.",
+      "typical_timeline": "12-24 months",
+      "aws_m2_managed": false,
+      "cost_model": "product_plus_services",
+      "fsi_regulator_familiarity": 4,
+      "cloud_native_output": "java_monolith",
+      "vendor_ecosystem_size": 3,
+      "timeline_months_typical": 18
+    },
+    "ntt_unikix": {
+      "name": "NTT UniKix",
+      "vendor": "NTT DATA",
+      "pattern": ["rehost", "replatform"],
+      "reference_urls": [
+        {"title": "How to Modernize a Replatformed Mainframe Development Lifecycle with AWS and NTT DATA (2021-08-02)", "url": "https://aws.amazon.com/blogs/apn/how-to-modernize-a-replatformed-mainframe-development-lifecycle-with-aws-and-ntt-data/"}
+      ],
+      "runtime": "Linux on EC2 / containers",
+      "source_fit": ["COBOL", "CICS", "JCL", "VSAM"],
+      "strengths": [
+        "Strong CICS runtime fidelity",
+        "Lower license cost than Micro Focus at scale"
+      ],
+      "weaknesses": [
+        "Smaller ecosystem",
+        "Manual ops tooling — no AWS-managed runtime"
+      ],
+      "fsi_considerations": "Customer-managed runtime; customer owns all audit-evidence tooling.",
+      "typical_timeline": "6-12 months",
+      "aws_m2_managed": false,
+      "cost_model": "product_license",
+      "fsi_regulator_familiarity": 3,
+      "cloud_native_output": "none",
+      "vendor_ecosystem_size": 2,
+      "timeline_months_typical": 9
+    },
+    "lzlabs": {
+      "name": "LzLabs Software-Defined Mainframe",
+      "vendor": "LzLabs",
+      "pattern": ["rehost"],
+      "reference_urls": [],
+      "runtime": "Linux on EC2",
+      "source_fit": ["COBOL", "PL/I", "HLASM", "CICS", "IMS"],
+      "strengths": [
+        "Supports HLASM — rare among partners",
+        "Binary-compatible: minimal code change for rehost"
+      ],
+      "weaknesses": [
+        "Legal history (IBM litigation) — FSI customers may require extra review",
+        "Niche vendor; smaller support footprint"
+      ],
+      "fsi_considerations": "Perform vendor legal/risk due-diligence before commit. Strong fit when HLASM volume is material.",
+      "typical_timeline": "6-9 months",
+      "aws_m2_managed": false,
+      "cost_model": "product_license",
+      "fsi_regulator_familiarity": 2,
+      "cloud_native_output": "none",
+      "vendor_ecosystem_size": 1,
+      "timeline_months_typical": 7
+    },
+    "kyndryl": {
+      "name": "Kyndryl Mainframe Modernization Services",
+      "vendor": "Kyndryl",
+      "pattern": ["rehost", "replatform", "refactor"],
+      "reference_urls": [
+        {"title": "Accelerating Mainframe Modernization — How Partners are Leveraging AWS Transform (2025-05-15)", "url": "https://aws.amazon.com/blogs/apn/accelerating-mainframe-modernization-learn-how-partners-are-leveraging-aws-transform/"}
+      ],
+      "runtime": "agnostic (whatever tool is chosen)",
+      "source_fit": ["COBOL", "CICS", "JCL", "DB2", "VSAM", "IMS", "PL/I", "HLASM", "Natural/ADABAS"],
+      "strengths": [
+        "Largest mainframe services practice globally",
+        "Deep FSI and regulated-industry experience",
+        "Tool-agnostic: will pair with Micro Focus, Blu Age, or Heirloom"
+      ],
+      "weaknesses": [
+        "Services-heavy: time-and-materials cost model",
+        "Quality depends heavily on assigned team"
+      ],
+      "fsi_considerations": "Strong at navigating FSI regulator relationships; useful when regulator engagement is in scope.",
+      "typical_timeline": "12-24+ months",
+      "aws_m2_managed": false,
+      "cost_model": "time_and_materials",
+      "fsi_regulator_familiarity": 5,
+      "cloud_native_output": "java_monolith",
+      "vendor_ecosystem_size": 5,
+      "timeline_months_typical": 18
+    },
+    "dxc": {
+      "name": "DXC Technology",
+      "vendor": "DXC",
+      "pattern": ["rehost", "replatform", "refactor"],
+      "reference_urls": [
+        {"title": "Accelerating Mainframe Modernization — How Partners are Leveraging AWS Transform (2025-05-15)", "url": "https://aws.amazon.com/blogs/apn/accelerating-mainframe-modernization-learn-how-partners-are-leveraging-aws-transform/"}
+      ],
+      "runtime": "agnostic",
+      "source_fit": ["COBOL", "CICS", "JCL", "DB2", "VSAM", "IMS"],
+      "strengths": [
+        "Large delivery capacity",
+        "Incumbent at many large FSI customers"
+      ],
+      "weaknesses": [
+        "Services-heavy",
+        "Consistency varies by geography"
+      ],
+      "fsi_considerations": "Often already a customer vendor; leverage existing contractual relationship.",
+      "typical_timeline": "12-24+ months",
+      "aws_m2_managed": false,
+      "cost_model": "time_and_materials",
+      "fsi_regulator_familiarity": 4,
+      "cloud_native_output": "java_monolith",
+      "vendor_ecosystem_size": 5,
+      "timeline_months_typical": 18
+    },
+    "tcs_mastercraft": {
+      "name": "TCS MasterCraft TransformPlus",
+      "vendor": "Tata Consultancy Services",
+      "pattern": ["automated_refactor"],
+      "reference_urls": [],
+      "runtime": "Java on AWS",
+      "source_fit": ["COBOL", "CICS", "JCL", "DB2", "VSAM", "IMS", "Natural/ADABAS"],
+      "strengths": [
+        "Strong in APAC and EMEA",
+        "Tight tool + delivery integration"
+      ],
+      "weaknesses": [
+        "Tool and services bundled — less flexibility",
+        "Output is standard Java; cloud-nativeness depends on post-refactor work"
+      ],
+      "fsi_considerations": "Common in APAC FSI; TCS usually holds end-to-end accountability.",
+      "typical_timeline": "12-18 months",
+      "aws_m2_managed": false,
+      "cost_model": "product_plus_services",
+      "fsi_regulator_familiarity": 4,
+      "cloud_native_output": "java_monolith",
+      "vendor_ecosystem_size": 4,
+      "timeline_months_typical": 15
+    },
+    "precisely": {
+      "name": "Precisely (Syncsort)",
+      "vendor": "Precisely",
+      "pattern": ["replatform (data)"],
+      "reference_urls": [],
+      "runtime": "AWS data services",
+      "source_fit": ["VSAM", "QSAM", "DB2", "IMS-DB"],
+      "strengths": [
+        "Best-in-class mainframe data ingestion to AWS",
+        "EBCDIC/packed-decimal fluency",
+        "Integrates with Kafka/MSK, Kinesis, S3"
+      ],
+      "weaknesses": [
+        "Data-only — does not address compute modernization"
+      ],
+      "fsi_considerations": "Strong fidelity on numeric conversion (packed decimal, comp-3) — important for payments and ledger accuracy.",
+      "typical_timeline": "3-9 months (data layer only)",
+      "aws_m2_managed": false,
+      "cost_model": "data_tool",
+      "fsi_regulator_familiarity": 3,
+      "cloud_native_output": "cloud_native",
+      "vendor_ecosystem_size": 3,
+      "timeline_months_typical": 6
+    }
+  },
+  "decision_criteria": [
+    "pattern_fit",
+    "source_system_coverage",
+    "aws_m2_managed",
+    "fsi_regulator_familiarity",
+    "typical_timeline",
+    "cost_model",
+    "cloud_native_output",
+    "vendor_ecosystem_size"
+  ]
+}

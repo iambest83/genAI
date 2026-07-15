@@ -1,0 +1,13 @@
+[project]
+name = "mainframe-modernization-agent"
+entrypoint = "agentcore_app.py"
+deployment_type = "direct_code_deploy"
+
+[project.environment]
+AWS_REGION = "us-east-1"
+KB_ID = "<KB_ID>"
+BEDROCK_ROUTER_MODEL_ID = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+BEDROCK_RESPONSE_MODEL_ID = "us.anthropic.claude-sonnet-4-6"
+GATEWAY_URL = "https://mfmodagent-gateway-<GATEWAY_ID>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp"
+MODEL_TEMPERATURE = "0.3"
+MODEL_MAX_TOKENS = "4096"

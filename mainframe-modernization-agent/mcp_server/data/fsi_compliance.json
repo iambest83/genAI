@@ -1,0 +1,253 @@
+{
+  "_version": "2026-06-16.1",
+  "_provenance": {
+    "last_reviewed": "2026-06-16",
+    "reviewed_by": "mainframe-modernization CoE — risk & compliance",
+    "sources": [
+      {"label": "AWS FSI compliance reference", "ref": "internal-fsi-compliance-ref"},
+      {"label": "Regulator guidance summaries (SOX/PCI/FFIEC/FINRA/FDIC/OCC/GLBA)", "ref": "internal-reg-summaries"}
+    ]
+  },
+  "compliance_disclaimer": "This is an automated control mapping for Solutions Architect planning. It is informational only and is NOT legal, audit, or compliance advice. Confirm all controls with the institution's compliance, legal, and internal-audit teams before relying on them.",
+  "regulations": {
+    "SOX": {
+      "name": "Sarbanes-Oxley Act",
+      "applies_to": "Publicly traded financial institutions",
+      "mainframe_impact": [
+        "Financial reporting systems must maintain audit trails during migration",
+        "Change management controls must be documented",
+        "Data integrity must be provably maintained"
+      ],
+      "controls": [
+        {
+          "control_id": "SOX-AUDIT-TRAIL",
+          "regulation_clause": "Section 404 (ICFR)",
+          "intent": "Immutable audit trail of all changes to financial-reporting systems",
+          "satisfied_by": {"service": ["CloudTrail", "S3 Object Lock"], "decision_category": ["target_service"]},
+          "evidence_required": ["CloudTrail trail config", "S3 Object Lock retention policy"]
+        },
+        {
+          "control_id": "SOX-CHANGE-MGMT",
+          "regulation_clause": "Section 404 (ICFR)",
+          "intent": "Documented, segregated change management for financial systems",
+          "satisfied_by": {"service": ["AWS Config", "IAM"], "decision_category": ["pattern"]},
+          "evidence_required": ["Config rules report", "IAM segregation-of-duties policy"]
+        },
+        {
+          "control_id": "SOX-DATA-INTEGRITY",
+          "regulation_clause": "Section 302 / 404",
+          "intent": "Provable data integrity through migration (source↔target reconciliation)",
+          "satisfied_by": {"service": ["DMS validation", "KMS"], "decision_category": ["target_service"]},
+          "evidence_required": ["DMS data-validation report", "reconciliation sign-off"]
+        }
+      ],
+      "migration_considerations": [
+        "Maintain parallel systems during transition for audit continuity",
+        "Document all data transformation rules",
+        "Implement automated reconciliation between source and target",
+        "Ensure segregation of duties in IAM policies"
+      ]
+    },
+    "PCI_DSS": {
+      "name": "Payment Card Industry Data Security Standard",
+      "applies_to": "Any entity handling cardholder data",
+      "mainframe_impact": [
+        "Cardholder data must remain encrypted during migration",
+        "Network segmentation must be maintained",
+        "Access controls must be equivalent or stronger"
+      ],
+      "controls": [
+        {
+          "control_id": "PCI-ENCRYPT-PAN",
+          "regulation_clause": "Req 3.4",
+          "intent": "Render PAN unreadable at rest (encryption / tokenization)",
+          "satisfied_by": {"service": ["KMS", "Macie"], "decision_category": ["target_service"]},
+          "evidence_required": ["KMS CMK policy", "tokenization design", "Macie findings"]
+        },
+        {
+          "control_id": "PCI-SEGMENTATION",
+          "regulation_clause": "Req 1.x",
+          "intent": "Network segmentation of the cardholder data environment",
+          "satisfied_by": {"service": ["VPC", "PrivateLink", "WAF"], "decision_category": ["target_service"]},
+          "evidence_required": ["VPC segmentation diagram", "security-group rules"]
+        },
+        {
+          "control_id": "PCI-THREAT-DETECT",
+          "regulation_clause": "Req 11.x",
+          "intent": "Detect and alert on threats to the CDE",
+          "satisfied_by": {"service": ["GuardDuty", "Security Hub"], "decision_category": ["target_service"]},
+          "evidence_required": ["GuardDuty enablement", "alert routing config"]
+        }
+      ],
+      "migration_considerations": [
+        "Tokenize cardholder data before migration",
+        "Use AWS PrivateLink for data transfer",
+        "Implement network segmentation via VPC design",
+        "Maintain PCI audit scope documentation"
+      ]
+    },
+    "FDIC": {
+      "name": "Federal Deposit Insurance Corporation Guidelines",
+      "applies_to": "FDIC-insured depository institutions",
+      "mainframe_impact": [
+        "Core banking data availability requirements",
+        "Disaster recovery and business continuity",
+        "Third-party risk management for cloud providers"
+      ],
+      "controls": [
+        {
+          "control_id": "FDIC-DR-RESILIENCE",
+          "regulation_clause": "Part 364 (Safety & Soundness)",
+          "intent": "Documented RPO/RTO with tested multi-AZ/multi-Region DR",
+          "satisfied_by": {"service": ["AWS Backup", "Resilience Hub"], "decision_category": ["target_service"]},
+          "evidence_required": ["RPO/RTO statement", "DR test results", "Resilience Hub assessment"]
+        },
+        {
+          "control_id": "FDIC-3P-RISK",
+          "regulation_clause": "FIL-19-2019 (3rd-party risk)",
+          "intent": "Cloud-provider due diligence and exit strategy",
+          "satisfied_by": {"service": ["AWS Artifact"], "decision_category": ["pattern"]},
+          "evidence_required": ["provider due-diligence record", "documented exit strategy"]
+        }
+      ],
+      "migration_considerations": [
+        "Document cloud provider due diligence",
+        "Implement RPO/RTO requirements in AWS architecture",
+        "Maintain data residency requirements",
+        "Plan for regulatory examination readiness"
+      ]
+    },
+    "OCC": {
+      "name": "Office of the Comptroller of the Currency",
+      "applies_to": "National banks and federal savings associations",
+      "mainframe_impact": [
+        "Technology risk management during migration",
+        "Operational resilience requirements",
+        "Third-party relationship management"
+      ],
+      "controls": [
+        {
+          "control_id": "OCC-GOVERNANCE",
+          "regulation_clause": "OCC 2013-29 (3rd-party) / Heightened Standards",
+          "intent": "Multi-account governance and guardrails",
+          "satisfied_by": {"service": ["AWS Organizations", "Control Tower"], "decision_category": ["pattern"]},
+          "evidence_required": ["SCP inventory", "Control Tower landing-zone config"]
+        },
+        {
+          "control_id": "OCC-SEC-POSTURE",
+          "regulation_clause": "Heightened Standards",
+          "intent": "Centralized security posture and vulnerability management",
+          "satisfied_by": {"service": ["Security Hub", "Inspector"], "decision_category": ["target_service"]},
+          "evidence_required": ["Security Hub standards report", "Inspector findings"]
+        }
+      ],
+      "migration_considerations": [
+        "Conduct technology risk assessment before migration",
+        "Implement operational resilience testing",
+        "Document exit strategy from cloud provider",
+        "Maintain board-level reporting on migration progress"
+      ]
+    },
+    "GLBA": {
+      "name": "Gramm-Leach-Bliley Act",
+      "applies_to": "Financial institutions offering financial products/services",
+      "mainframe_impact": [
+        "Customer financial data privacy during migration",
+        "Safeguards Rule compliance",
+        "Information sharing controls"
+      ],
+      "controls": [
+        {
+          "control_id": "GLBA-PII-PROTECT",
+          "regulation_clause": "Safeguards Rule (16 CFR 314)",
+          "intent": "Protect customer NPI with encryption + access control",
+          "satisfied_by": {"service": ["KMS", "IAM", "Macie"], "decision_category": ["target_service"]},
+          "evidence_required": ["data classification", "KMS encryption config", "DLP controls"]
+        },
+        {
+          "control_id": "GLBA-ACCESS-AUDIT",
+          "regulation_clause": "Safeguards Rule (16 CFR 314)",
+          "intent": "Audit access to customer financial data",
+          "satisfied_by": {"service": ["CloudTrail", "IAM"], "decision_category": ["target_service"]},
+          "evidence_required": ["CloudTrail access logs", "least-privilege IAM review"]
+        }
+      ],
+      "migration_considerations": [
+        "Classify all customer data before migration",
+        "Implement data loss prevention controls",
+        "Maintain privacy notices and opt-out mechanisms",
+        "Encrypt all customer data in transit and at rest"
+      ]
+    },
+    "FFIEC": {
+      "name": "Federal Financial Institutions Examination Council Guidance",
+      "applies_to": "US depository institutions and their technology service providers",
+      "mainframe_impact": [
+        "Architecture, infrastructure, and operations examination expectations",
+        "Business continuity and resilience management",
+        "Authentication and access management controls"
+      ],
+      "controls": [
+        {
+          "control_id": "FFIEC-RESILIENCE",
+          "regulation_clause": "Business Continuity Management booklet",
+          "intent": "Resilience and recovery aligned to business impact analysis",
+          "satisfied_by": {"service": ["Resilience Hub", "AWS Backup"], "decision_category": ["target_service"]},
+          "evidence_required": ["BIA", "resilience test evidence", "RTO/RPO mapping"]
+        },
+        {
+          "control_id": "FFIEC-AUTH",
+          "regulation_clause": "Authentication & Access Management guidance",
+          "intent": "Strong authentication and least-privilege access",
+          "satisfied_by": {"service": ["IAM Identity Center", "MFA"], "decision_category": ["target_service"]},
+          "evidence_required": ["MFA enforcement", "access-review records"]
+        }
+      ],
+      "migration_considerations": [
+        "Map controls to FFIEC IT Examination Handbook booklets",
+        "Maintain evidence packages for examination readiness",
+        "Document resilience testing against the business impact analysis"
+      ]
+    },
+    "FINRA_17a-4": {
+      "name": "SEC Rule 17a-4 / FINRA Books-and-Records",
+      "applies_to": "Broker-dealers and FINRA member firms",
+      "mainframe_impact": [
+        "Records must be retained in non-rewriteable, non-erasable (WORM) form",
+        "Retention periods and audit-trail of records must be preserved",
+        "Designated third-party access to records on request"
+      ],
+      "controls": [
+        {
+          "control_id": "FINRA-WORM-RETENTION",
+          "regulation_clause": "SEA Rule 17a-4(f)",
+          "intent": "Store required records in WORM form for the mandated retention period",
+          "satisfied_by": {"service": ["S3 Object Lock (Compliance mode)"], "decision_category": ["target_service"]},
+          "evidence_required": ["S3 Object Lock Compliance-mode config", "retention-period policy"]
+        },
+        {
+          "control_id": "FINRA-AUDIT-ACCESS",
+          "regulation_clause": "SEA Rule 17a-4(f)(3)",
+          "intent": "Audit-trail and designated-examiner access to retained records",
+          "satisfied_by": {"service": ["CloudTrail", "IAM"], "decision_category": ["target_service"]},
+          "evidence_required": ["access audit log", "designated 3rd-party access procedure"]
+        }
+      ],
+      "migration_considerations": [
+        "Confirm WORM retention is enforced at the storage layer, not the application",
+        "Document the retention schedule per record type",
+        "Validate examiner-access procedures post-migration"
+      ]
+    }
+  },
+  "general_best_practices": [
+    "Conduct regulatory impact assessment before migration planning",
+    "Engage compliance team early in the modernization process",
+    "Maintain dual-run capability during transition periods",
+    "Implement automated compliance monitoring from day one",
+    "Document all architectural decisions with compliance rationale",
+    "Use AWS Artifact to obtain SOC 2, PCI, and ISO reports",
+    "Implement least-privilege access across all migrated workloads",
+    "Plan for regulatory examination and audit readiness"
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "_version": "2026-05-26.1",
+  "compute": {
+    "CICS": {
+      "description": "Customer Information Control System - online transaction processing",
+      "aws_services": ["API Gateway + Lambda", "ECS/Fargate", "App Runner"],
+      "recommended": "API Gateway + Lambda for request/response; ECS for long-running",
+      "fsi_considerations": "Ensure transaction atomicity, implement idempotency keys"
+    },
+    "IMS_TM": {
+      "description": "Information Management System - Transaction Manager",
+      "aws_services": ["API Gateway + Lambda", "Step Functions"],
+      "recommended": "API Gateway + Lambda with DynamoDB for message queuing",
+      "fsi_considerations": "Map IMS transaction codes to API routes"
+    },
+    "BATCH": {
+      "description": "Batch processing (JCL jobs)",
+      "aws_services": ["AWS Batch", "Step Functions", "Lambda", "Glue"],
+      "recommended": "Step Functions for orchestration + Lambda/Batch for compute",
+      "fsi_considerations": "Maintain batch windows, implement checkpointing"
+    },
+    "TSO_ISPF": {
+      "description": "Time Sharing Option / Interactive System Productivity Facility",
+      "aws_services": ["AWS Cloud9", "Systems Manager Session Manager"],
+      "recommended": "Cloud9 for development, SSM for operations"
+    }
+  },
+  "data": {
+    "DB2": {
+      "description": "IBM relational database",
+      "aws_services": ["Aurora PostgreSQL", "Aurora MySQL", "RDS"],
+      "recommended": "Aurora PostgreSQL for most DB2 migrations",
+      "fsi_considerations": "Validate SQL compatibility, stored procedure conversion, referential integrity"
+    },
+    "IMS_DB": {
+      "description": "IMS hierarchical database",
+      "aws_services": ["DynamoDB", "Aurora PostgreSQL", "DocumentDB"],
+      "recommended": "DynamoDB for hierarchical data; Aurora if relational queries needed",
+      "fsi_considerations": "Map segment hierarchies to DynamoDB single-table design"
+    },
+    "VSAM_KSDS": {
+      "description": "Key Sequenced Data Set",
+      "aws_services": ["DynamoDB", "Aurora", "ElastiCache"],
+      "recommended": "DynamoDB with partition key matching VSAM primary key",
+      "fsi_considerations": "Ensure key uniqueness, handle alternate index migration"
+    },
+    "VSAM_ESDS": {
+      "description": "Entry Sequenced Data Set",
+      "aws_services": ["S3", "Kinesis Data Streams", "DynamoDB"],
+      "recommended": "S3 for append-only logs; Kinesis for streaming",
+      "fsi_considerations": "Maintain insertion order, audit trail compliance"
+    },
+    "QSAM": {
+      "description": "Queued Sequential Access Method - flat files",
+      "aws_services": ["S3", "EFS"],
+      "recommended": "S3 for batch files, EFS for shared file access",
+      "fsi_considerations": "Encrypt at rest (S3 SSE-KMS), lifecycle policies for retention"
+    }
+  },
+  "middleware": {
+    "MQ_SERIES": {
+      "description": "IBM MQ message queuing",
+      "aws_services": ["Amazon MQ", "SQS", "EventBridge"],
+      "recommended": "Amazon MQ for lift-and-shift; SQS for cloud-native",
+      "fsi_considerations": "Message ordering, exactly-once delivery, dead letter queues"
+    },
+    "CICS_TS_QUEUES": {
+      "description": "CICS Temporary Storage / Transient Data queues",
+      "aws_services": ["ElastiCache Redis", "SQS", "DynamoDB"],
+      "recommended": "ElastiCache for TS queues; SQS for TD queues",
+      "fsi_considerations": "TTL management, queue depth monitoring"
+    },
+    "FTP_CONNECT_DIRECT": {
+      "description": "File transfer (Connect:Direct / FTP)",
+      "aws_services": ["AWS Transfer Family", "S3", "DataSync"],
+      "recommended": "AWS Transfer Family (SFTP/FTPS) + S3",
+      "fsi_considerations": "Encryption in transit, PCI-DSS compliance for file transfers"
+    }
+  },
+  "security": {
+    "RACF": {
+      "description": "Resource Access Control Facility",
+      "aws_services": ["IAM", "IAM Identity Center", "AWS Organizations SCPs"],
+      "recommended": "IAM roles and policies; Identity Center for user federation",
+      "fsi_considerations": "Map RACF profiles to IAM policies, maintain separation of duties"
+    },
+    "TOP_SECRET": {
+      "description": "CA Top Secret security",
+      "aws_services": ["IAM", "Secrets Manager", "KMS"],
+      "recommended": "IAM + KMS for encryption, Secrets Manager for credentials",
+      "fsi_considerations": "Audit trail via CloudTrail, key rotation policies"
+    }
+  },
+  "monitoring": {
+    "SMF": {
+      "description": "System Management Facilities - performance/audit records",
+      "aws_services": ["CloudWatch", "CloudTrail", "OpenSearch"],
+      "recommended": "CloudWatch for metrics, CloudTrail for audit, OpenSearch for log analytics",
+      "fsi_considerations": "Retain logs per regulatory requirements (7+ years for SOX)"
+    },
+    "SYSLOG": {
+      "description": "System log",
+      "aws_services": ["CloudWatch Logs", "S3", "OpenSearch"],
+      "recommended": "CloudWatch Logs with S3 archival",
+      "fsi_considerations": "Centralized logging, tamper-proof storage"
+    }
+  }
+}

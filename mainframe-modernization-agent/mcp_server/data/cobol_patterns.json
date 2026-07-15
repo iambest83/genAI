@@ -1,0 +1,37 @@
+{
+  "_version": "2026-05-26.1",
+  "data_types": {
+    "PIC 9": {"description": "Numeric field", "aws_equivalent": "Integer/Number in DynamoDB or INT in Aurora"},
+    "PIC X": {"description": "Alphanumeric field", "aws_equivalent": "String in DynamoDB or VARCHAR in Aurora"},
+    "PIC S9 COMP-3": {"description": "Packed decimal (signed)", "aws_equivalent": "DECIMAL in Aurora, Number in DynamoDB"},
+    "PIC S9 COMP": {"description": "Binary numeric", "aws_equivalent": "BIGINT in Aurora"},
+    "PIC 9V99": {"description": "Implied decimal", "aws_equivalent": "DECIMAL(x,2) in Aurora"},
+    "OCCURS": {"description": "Array/table definition", "aws_equivalent": "List/Array in DynamoDB, ARRAY in Aurora PostgreSQL"},
+    "REDEFINES": {"description": "Union-like overlay", "aws_equivalent": "Polymorphic JSON field or separate columns"}
+  },
+  "file_handling": {
+    "SEQUENTIAL": {"description": "Sequential file processing (QSAM)", "aws_equivalent": "S3 objects + Lambda/Step Functions streaming", "migration_pattern": "Convert to S3 event-driven processing"},
+    "INDEXED": {"description": "VSAM KSDS indexed files", "aws_equivalent": "DynamoDB table with partition/sort keys", "migration_pattern": "Map VSAM keys to DynamoDB key schema"},
+    "RELATIVE": {"description": "VSAM RRDS relative record", "aws_equivalent": "DynamoDB with numeric partition key", "migration_pattern": "Use auto-increment or sequence-based keys"},
+    "LINE SEQUENTIAL": {"description": "Text file processing", "aws_equivalent": "S3 + Lambda line-by-line processing", "migration_pattern": "Use S3 Select or Athena for query-based access"}
+  },
+  "program_structure": {
+    "IDENTIFICATION DIVISION": {"description": "Program metadata", "aws_equivalent": "Module/class metadata, package.json or pyproject.toml"},
+    "ENVIRONMENT DIVISION": {"description": "Hardware/file mappings", "aws_equivalent": "Environment variables, AWS SDK config, IAM roles"},
+    "DATA DIVISION": {"description": "Data structures and variables", "aws_equivalent": "Class definitions, Pydantic models, TypedDicts"},
+    "PROCEDURE DIVISION": {"description": "Business logic", "aws_equivalent": "Lambda handlers, API route handlers, service classes"},
+    "WORKING-STORAGE SECTION": {"description": "Program-level variables", "aws_equivalent": "Class instance variables, module-level state"},
+    "LINKAGE SECTION": {"description": "Inter-program communication", "aws_equivalent": "API request/response models, SQS message schemas"},
+    "COPY": {"description": "Copybook inclusion", "aws_equivalent": "Shared libraries, imported modules, API schemas"}
+  },
+  "common_verbs": {
+    "PERFORM": {"description": "Subroutine call or loop", "aws_equivalent": "Function call, for/while loop"},
+    "MOVE": {"description": "Data assignment", "aws_equivalent": "Variable assignment"},
+    "COMPUTE": {"description": "Arithmetic operation", "aws_equivalent": "Mathematical expression"},
+    "EVALUATE": {"description": "Multi-way branch (switch/case)", "aws_equivalent": "match/case (Python 3.10+), switch statement"},
+    "STRING/UNSTRING": {"description": "String concatenation/splitting", "aws_equivalent": "String join/split operations"},
+    "CALL": {"description": "External program invocation", "aws_equivalent": "Lambda invoke, API call, function import"},
+    "EXEC CICS": {"description": "CICS transaction command", "aws_equivalent": "API Gateway + Lambda handler"},
+    "EXEC SQL": {"description": "Embedded SQL (DB2)", "aws_equivalent": "SQLAlchemy query, Aurora Data API call"}
+  }
+}

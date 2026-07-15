@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mainframe Modernization Assistant</title>
+
+  <!-- Defense-in-depth: even if untrusted markdown bypasses DOMPurify,
+       CSP blocks inline scripts and external loads outside the allowlist.
+       'unsafe-inline' on style is needed for marked/hljs-rendered blocks. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' https://cdn.jsdelivr.net;
+                 style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+                 img-src 'self' data:;
+                 connect-src 'self' https: wss:;
+                 object-src 'none';
+                 base-uri 'self';
+                 frame-ancestors 'none';">
+
+  <!-- Markdown + syntax highlighting + sanitizer (CDN, classic globals) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header: title + customer/LoB pickers + action buttons -->
+  <header>
+    <h1>Mainframe <span class="accent">Modernization</span></h1>
+    <div class="header-controls">
+      <div class="picker" id="picker"></div>
+      <button class="hdr-btn" id="whatIKnowBtn" type="button"
+              data-tip="Recap of facts captured for the bound customer. LoB-scoped if you've set one; customer-wide otherwise. No LLM call — just what's in memory."
+              title="Pick a Customer first — this recap is always customer-scoped."
+              data-needs-customer="true"
+              disabled>
+        <span>🧠 What I know</span>
+      </button>
+      <button class="hdr-btn" id="pasteNotesBtn" type="button"
+              data-tip="Paste meeting notes or a transcript. The agent extracts facts, decisions, action items, and open questions, then asks you to confirm what to merge into the customer profile."
+              title="Pick a Customer first — meeting notes always belong to a specific customer."
+              data-needs-customer="true"
+              disabled>
+        <span>📋 Paste notes</span>
+      </button>
+      <button class="hdr-btn" id="recordBtn" type="button"
+              data-tip="Record a customer call live in the browser, or upload an existing audio file. The agent transcribes (with speaker labels), extracts facts/decisions/action items, and asks you to confirm what to merge."
+              title="Pick a Customer first — recordings always belong to a specific customer."
+              data-needs-customer="true"
+              disabled>
+        <span>🎤 Record</span>
+      </button>
+      <button class="hdr-btn" id="reportBtn" type="button"
+              data-tip="Composite engagement report — captured profile, top open gaps, recommendation with trade-offs, and suggested artifacts to draft next. Needs a customer bound."
+              title="Composite engagement report: known facts, open gaps, recommendation, suggested artifacts. Needs a customer bound."
+              disabled>
+        <span>📊 Generate report</span>
+      </button>
+      <button class="hdr-btn" id="newChatBtn" type="button"
+              data-tip="Clear the chat history on screen and bring back the welcome panel. Profile stays in memory."
+              title="Clear the chat on screen and return to the welcome panel. Profile stays in memory.">
+        <span>+ New chat</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Status bar: connection dot + text only -->
+  <div class="status-bar" id="statusBar"></div>
+
+  <!-- Main chat surface. Welcome panel is rendered until the first turn. -->
+  <div class="chat" id="chat">
+    <div class="welcome">
+      <!-- Hero: mascot top-left, title/sub on the right of it -->
+      <div class="welcome-hero">
+        <div class="welcome-hero-top">
+          <div class="welcome-hero-mascot" aria-hidden="true">
+            <!-- Compact AWS-themed mascot. Same identity as the chat avatar
+                 but a touch larger so it anchors the screen. Bobs gently. -->
+            <svg viewBox="0 0 60 76" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <animateTransform attributeName="transform" type="translate"
+                                  values="0 0; 0 -3; 0 0" dur="2.6s" repeatCount="indefinite"/>
+                <line x1="30" y1="10" x2="30" y2="2" stroke="#FF9900" stroke-width="2"/>
+                <circle cx="30" cy="2" r="2.6" fill="#FF9900">
+                  <animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="10" y="10" width="40" height="32" rx="9" fill="#232F3E" stroke="#FF9900" stroke-width="1.6"/>
+                <rect x="14" y="20" width="32" height="14" rx="4" fill="#37475A"/>
+                <circle cx="22" cy="27" r="2.6" fill="#00A4DB"/>
+                <circle cx="38" cy="27" r="2.6" fill="#00A4DB"/>
+                <path d="M22 38 Q30 43 38 38" fill="none" stroke="#FF9900" stroke-width="1.6" stroke-linecap="round"/>
+                <rect x="8" y="46" width="44" height="24" rx="7" fill="#232F3E" stroke="#FF9900" stroke-width="1.6"/>
+                <rect x="15" y="52" width="30" height="6" rx="1.5" fill="#FFFFFF"/>
+                <text x="30" y="57" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="4.6" font-weight="800" fill="#232F3E" letter-spacing="0.18em">AWS</text>
+                <circle cx="14" cy="64" r="1.4" fill="#FF9900"/>
+                <circle cx="19" cy="64" r="1.4" fill="#00A4DB"/>
+                <circle cx="24" cy="64" r="1.4" fill="#7DD3FC"/>
+              </g>
+            </svg>
+          </div>
+          <div class="welcome-hero-text">
+            <div class="welcome-title">
+              Your <span class="welcome-title-accent">FSI modernization</span> Sherpa
+            </div>
+            <div class="welcome-sub">
+              Bring your mainframe questions &mdash; I'll help you size the
+              workload, pick a path, weigh partners, and draft the artifacts
+              you need.
+            </div>
+          </div>
+        </div>
+      </div><!-- /.welcome-hero -->
+
+      <!-- Three-column stage: tall mainframe (left rail), card grid +
+           flowing R-words in the middle, tall AWS cloud (right rail).
+           Lives outside .welcome-hero so it spans the full chat width. -->
+      <div class="welcome-stage">
+          <!-- LEFT RAIL: tall mainframe SVG + label below -->
+          <div class="welcome-rail welcome-rail-left" aria-hidden="true">
+            <svg class="rail-mainframe" viewBox="0 0 220 580" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+              <!-- TOP TOWER section — small cap that rises above the main
+                   cabinet, gives the rig a more distinctive z16-style
+                   silhouette per the latest design pass. -->
+              <rect x="34" y="6" width="152" height="38" rx="6" fill="#0a0f1a" stroke="#000000" stroke-width="2.5"/>
+              <rect x="46" y="14" width="128" height="22" rx="3" fill="#022c22" stroke="#10b981" stroke-width="1.4"/>
+              <text x="110" y="29" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#10b981" letter-spacing="0.18em">IBM z16</text>
+              <!-- 3 indicator LEDs across the top -->
+              <circle cx="50" cy="56" r="2.5" fill="#10b981">
+                <animate attributeName="opacity" values="1;0.3;1" dur="1.4s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="64" cy="56" r="2.5" fill="#22c55e"/>
+              <circle cx="78" cy="56" r="2.5" fill="#10b981"/>
+
+              <!-- main cabinet — black border, IBM Z look. Cabinet starts
+                   just below the top tower; full chassis is now ~530px
+                   tall (was 440), giving the rail more presence to match
+                   the right-side card grid. Widened from 200 → 212 wide
+                   per latest design pass — same column footprint, broader
+                   chassis silhouette. -->
+              <rect x="4" y="64" width="212" height="510" rx="12" fill="#0a0f1a" stroke="#000000" stroke-width="3"/>
+              <!-- top deck w/ tape reels -->
+              <rect x="26" y="80" width="168" height="76" rx="5" fill="#0a0f1a" stroke="#1a1f2e" stroke-width="1.5"/>
+              <circle cx="62" cy="118" r="22" fill="none" stroke="#10b981" stroke-width="2"/>
+              <circle cx="62" cy="118" r="5" fill="#10b981"/>
+              <line x1="62" y1="100" x2="62" y2="106" stroke="#FFFFFF" stroke-width="2.4">
+                <animateTransform attributeName="transform" type="rotate" from="0 62 74" to="360 62 74" dur="3s" repeatCount="indefinite"/>
+              </line>
+              <circle cx="158" cy="118" r="22" fill="none" stroke="#10b981" stroke-width="2"/>
+              <circle cx="158" cy="118" r="5" fill="#10b981"/>
+              <line x1="158" y1="100" x2="158" y2="106" stroke="#FFFFFF" stroke-width="2.4">
+                <animateTransform attributeName="transform" type="rotate" from="0 158 74" to="-360 158 74" dur="3s" repeatCount="indefinite"/>
+              </line>
+
+              <!-- console screen -->
+              <rect x="30" y="168" width="160" height="120" rx="4" fill="#022c22" stroke="#10b981" stroke-width="2"/>
+              <text x="42" y="192" font-family="JetBrains Mono, monospace" font-size="14" fill="#10b981">READY.</text>
+              <text x="42" y="214" font-family="JetBrains Mono, monospace" font-size="11" fill="#10b981">// CICS region</text>
+              <text x="42" y="230" font-family="JetBrains Mono, monospace" font-size="11" fill="#10b981">// DB2 v12.1</text>
+              <text x="42" y="246" font-family="JetBrains Mono, monospace" font-size="11" fill="#10b981">// JCL queued: 47</text>
+              <text x="42" y="264" font-family="JetBrains Mono, monospace" font-size="11" fill="#10b981">// MIPS: 38,420</text>
+              <rect x="42" y="270" width="9" height="3" fill="#10b981">
+                <animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite"/>
+              </rect>
+
+              <!-- card-slot panels — black with subtle dark-green trim. More
+                   slots now that the cabinet is taller. -->
+              <rect x="30" y="302" width="160" height="14" fill="#000000" stroke="#0f3a2a"/>
+              <rect x="30" y="322" width="160" height="14" fill="#000000" stroke="#0f3a2a"/>
+              <rect x="30" y="342" width="160" height="14" fill="#000000" stroke="#0f3a2a"/>
+              <rect x="30" y="362" width="160" height="14" fill="#000000" stroke="#0f3a2a"/>
+
+              <!-- moving "data dots" — all green to match the green-screen vibe -->
+              <g>
+                <circle cx="-6" cy="309" r="3" fill="#10b981">
+                  <animate attributeName="cx" values="-6;200" dur="3.4s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="-6" cy="329" r="3" fill="#22c55e">
+                  <animate attributeName="cx" values="-6;200" dur="3.4s" begin="0.6s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="-6" cy="349" r="3" fill="#10b981">
+                  <animate attributeName="cx" values="-6;200" dur="3.4s" begin="1.2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="-6" cy="369" r="3" fill="#22c55e">
+                  <animate attributeName="cx" values="-6;200" dur="3.4s" begin="1.8s" repeatCount="indefinite"/>
+                </circle>
+              </g>
+
+              <!-- secondary console (lower) — extra readout near the bottom -->
+              <rect x="30" y="394" width="160" height="60" rx="3" fill="#022c22" stroke="#10b981" stroke-width="1.4"/>
+              <text x="42" y="414" font-family="JetBrains Mono, monospace" font-size="10" fill="#10b981">// LPAR-A: ONLINE</text>
+              <text x="42" y="430" font-family="JetBrains Mono, monospace" font-size="10" fill="#10b981">// LPAR-B: ONLINE</text>
+              <text x="42" y="446" font-family="JetBrains Mono, monospace" font-size="10" fill="#10b981">// VSAM: 12.4TB</text>
+
+              <!-- bottom indicator strip + LEDs — green dynamic bar -->
+              <rect x="30" y="466" width="160" height="12" rx="3" fill="#0a0f1a" stroke="#10b981" stroke-width="1"/>
+              <rect x="34" y="469" width="20" height="6" fill="#10b981">
+                <animate attributeName="width" values="0;152;0" dur="3.6s" repeatCount="indefinite"/>
+              </rect>
+              <circle cx="40" cy="492" r="3.5" fill="#10b981">
+                <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="56" cy="492" r="3.5" fill="#22c55e"/>
+              <circle cx="72" cy="492" r="3.5" fill="#10b981"/>
+              <circle cx="180" cy="492" r="3.5" fill="#10b981">
+                <animate attributeName="opacity" values="1;0.4;1" dur="1.2s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+
+          <!-- MIDDLE COLUMN: card grid with R-words streaming through it -->
+          <div class="welcome-middle">
+            <div class="welcome-grid">
+              <button type="button" class="welcome-card" data-prompt="Walk me through the major mainframe migration patterns (rehost, replatform, refactor, automated refactoring, retire) and the key trade-offs between them — speed, cost, business risk, target architecture flexibility. Don't assume any specific customer choice.">
+                <div class="welcome-card-h">Pick a path</div>
+                <div class="welcome-card-b">Rehost, replatform, refactor, retire — pattern trade-offs and when each fits.</div>
+              </button>
+              <button type="button" class="welcome-card" data-prompt="Compare the major mainframe modernization partners — Micro Focus / OpenText, Blu Age (AWS-native), Heirloom, Astadia, TCS, Deloitte, Kyndryl, DXC. What are each one's strengths, target patterns, and where they typically engage? Don't assume any specific customer has selected a partner.">
+                <div class="welcome-card-h">Compare partners</div>
+                <div class="welcome-card-b">Micro Focus, Blu Age, Heirloom, TCS, Deloitte and others — strengths and fit.</div>
+              </button>
+              <button type="button" class="welcome-card" data-prompt="Map the major mainframe components (CICS, DB2, VSAM, IMS, MQ, RACF, JCL/batch, COBOL programs) to their typical AWS service equivalents. Note where there's a clean 1:1 fit vs. where re-architecture is unavoidable.">
+                <div class="welcome-card-h">Map components</div>
+                <div class="welcome-card-b">CICS, DB2, VSAM, IMS, MQ, RACF → modern AWS equivalents.</div>
+              </button>
+            </div>
+
+            <div class="welcome-grid">
+              <button type="button" class="welcome-card" data-prompt="Summarize the FSI compliance regimes (SOX, PCI-DSS, FDIC, OCC, GLBA, FFIEC, DORA) and how each shapes mainframe modernization decisions — encryption, audit trails, data residency, change controls, BCP/DR.">
+                <div class="welcome-card-h">FSI compliance</div>
+                <div class="welcome-card-b">SOX, PCI-DSS, FDIC, OCC, GLBA, FFIEC, DORA — what each one demands.</div>
+              </button>
+              <button type="button" class="welcome-card" data-prompt="How does mainframe modernization map to the AWS Well-Architected Framework's six pillars (Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability)? Highlight the FSI-specific considerations under each pillar.">
+                <div class="welcome-card-h">Well-Architected lens</div>
+                <div class="welcome-card-b">Map modernization decisions to the six WAF pillars (FSI-specific).</div>
+              </button>
+              <button type="button" class="welcome-card" data-prompt="Walk me through how to align a mainframe modernization program with TOGAF — Business / Data / Application / Technology architecture phases, capability maps, target-state architecture artifacts, and gap analysis. Frame it for an FSI customer.">
+                <div class="welcome-card-h">TOGAF alignment</div>
+                <div class="welcome-card-b">BDAT phases, capability maps, target-state artifacts, gap analysis.</div>
+              </button>
+            </div>
+
+            <div class="welcome-grid">
+              <button type="button" class="welcome-card" data-prompt="What goes into a credible TCO and business case for mainframe modernization? Cover MIPS-based current-state cost modeling, AWS target-state cost modeling, transition costs, contingency, and the typical break-even horizon for FSI customers.">
+                <div class="welcome-card-h">TCO &amp; business case</div>
+                <div class="welcome-card-b">MIPS modeling, target-state cost, transition costs, break-even horizons.</div>
+              </button>
+              <button type="button" class="welcome-card" data-prompt="What's a good first set of discovery questions I should be asking my customer to scope a mainframe modernization engagement? Cover workload shape, constraints, drivers, partner posture, and timeline.">
+                <div class="welcome-card-h">Discovery questions</div>
+                <div class="welcome-card-b">A starter set of probes to scope the engagement and surface constraints.</div>
+              </button>
+              <button type="button" class="welcome-card" data-prompt="Summarize AWS's mainframe modernization offerings, with the strongest focus on AWS Transform (the AI-powered modernization tool) and how it accelerates COBOL → Java analysis, transformation, and validation. Then cover the complementary services: AWS Mainframe Modernization service (Micro Focus runtime + Blu Age refactor pattern), AWS Application Migration Service for rehost, AWS Database Migration Service / DMS Schema Conversion Tool for DB2 → Aurora/PostgreSQL, AWS Migration Hub Refactor Spaces for incremental refactoring, and AWS Mainframe Modernization Replatform with Micro Focus. For each, give a one-line summary, when to pick it, and the FSI considerations. Lead with AWS Transform.">
+                <div class="welcome-card-h">AWS Mainframe Modernization Offerings</div>
+                <div class="welcome-card-b">AWS Transform (AI-powered), AWS M2, AMS, DMS, Refactor Spaces — what each one does and when to pick it.</div>
+              </button>
+            </div>
+          </div><!-- /.welcome-middle -->
+
+        </div><!-- /.welcome-stage -->
+
+      <div class="welcome-foot">
+        Set a <strong>Customer</strong> and <strong>LoB</strong> at the top for engagement-specific guidance, then type a question below to start.
+      </div>
+
+      <!-- Rotating mainframe fun fact at the very bottom -->
+      <div class="welcome-funfact" id="welcomeFunFact"></div>
+    </div>
+  </div>
+
+  <!-- Input area: probe callout (when present) stacks above the input bar -->
+  <div class="input-area">
+    <div class="probe" id="probeCallout"></div>
+    <div class="inp">
+      <textarea id="inp" rows="2" placeholder="How can I help?  (Enter to send, Shift+Enter for a new line)" autofocus></textarea>
+      <button id="btn" type="button">Send</button>
+    </div>
+  </div>
+
+  <!-- Paste-notes modal (item 4.1). Hidden until the SA clicks the
+       header button. Visually similar to a confirm dialog but with a
+       large textarea + Extract / Cancel actions. -->
+  <div class="notes-modal" id="notesModal" hidden role="dialog" aria-modal="true" aria-labelledby="notesModalTitle">
+    <div class="notes-modal-card">
+      <div class="notes-modal-head">
+        <span id="notesModalTitle">Paste meeting notes</span>
+        <button class="notes-modal-close" id="notesModalClose" type="button" title="Close">×</button>
+      </div>
+      <div class="notes-modal-body">
+        <p class="notes-modal-help">
+          Paste a transcript or your own notes from a customer meeting. I'll
+          extract <strong>facts, decisions, action items, and open
+          questions</strong> from the text and show you a preview — nothing
+          is merged into the customer profile until you confirm.
+        </p>
+        <textarea id="notesModalText" rows="12"
+                  placeholder="Paste meeting notes or transcript here…"></textarea>
+        <div class="notes-modal-foot">
+          <span class="notes-modal-meta" id="notesModalMeta"></span>
+          <button class="btn btn-ghost" id="notesModalCancel" type="button">Cancel</button>
+          <button class="btn btn-primary" id="notesModalSubmit" type="button">Extract</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recording modal (item 4.2). Two tabs: live record (MediaRecorder)
+       and file upload. Consent gate required before either path proceeds. -->
+  <div class="rec-modal" id="recModal" hidden role="dialog" aria-modal="true" aria-labelledby="recModalTitle">
+    <div class="rec-modal-card">
+      <div class="rec-modal-head">
+        <span id="recModalTitle">🎤 Record or upload a meeting</span>
+        <button class="rec-modal-close" id="recModalClose" type="button" title="Close">×</button>
+      </div>
+      <div class="rec-modal-body">
+        <p class="rec-modal-help">
+          The recording will be transcribed (with speaker labels) and run
+          through the same extractor as pasted notes — you'll get a preview
+          to review before anything is merged into the customer profile.
+        </p>
+
+        <label class="rec-consent">
+          <input type="checkbox" id="recConsent" />
+          <span>
+            <strong>I confirm</strong> that all participants on this call
+            have been informed and have consented to the recording being
+            shared with this AWS modernization tool. The audio is encrypted
+            at rest, retained for 30 days, and used only to build the
+            engagement profile.
+          </span>
+        </label>
+
+        <div class="rec-tabs" role="tablist">
+          <button class="rec-tab is-active" data-tab="record" type="button" role="tab">Record live</button>
+          <button class="rec-tab" data-tab="upload" type="button" role="tab">Upload file</button>
+        </div>
+
+        <div class="rec-tab-panel" data-panel="record">
+          <!-- Listening mascot — same AWS-themed bot as the welcome
+               screen, with headphones over the visor. The .is-listening
+               class is added by record-modal.js when MediaRecorder
+               starts; the equalizer bars + sound waves animate only in
+               that state. -->
+          <div class="rec-mascot" id="recMascot" aria-hidden="true">
+            <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+              <!-- Soft aura -->
+              <circle cx="100" cy="92" r="78" fill="rgba(255,153,0,0.06)" stroke="rgba(255,153,0,0.30)" stroke-width="1" stroke-dasharray="2 4">
+                <animate attributeName="r" values="74;82;74" dur="3.4s" repeatCount="indefinite"/>
+              </circle>
+
+              <!-- Bot body bobs gently -->
+              <g class="rec-mascot-body">
+                <animateTransform attributeName="transform" type="translate" values="0 0; 0 -3; 0 0" dur="2.6s" repeatCount="indefinite"/>
+
+                <!-- HEAD -->
+                <rect x="58" y="38" width="84" height="70" rx="18" fill="#232F3E" stroke="#FF9900" stroke-width="2.4"/>
+                <!-- visor -->
+                <rect x="68" y="60" width="64" height="30" rx="9" fill="#37475A"/>
+                <!-- eyes -->
+                <circle cx="86" cy="76" r="4" fill="#00A4DB"/>
+                <circle cx="114" cy="76" r="4" fill="#00A4DB"/>
+                <!-- AWS smile mouth -->
+                <path d="M82 100 Q100 110 118 100" fill="none" stroke="#FF9900" stroke-width="2.6" stroke-linecap="round"/>
+
+                <!-- HEADPHONES -->
+                <path d="M58 60 Q58 28 100 28 Q142 28 142 60" fill="none" stroke="#FF9900" stroke-width="4" stroke-linecap="round"/>
+                <rect x="46" y="58" width="14" height="26" rx="5" fill="#FF9900" stroke="#232F3E" stroke-width="1.8"/>
+                <rect x="140" y="58" width="14" height="26" rx="5" fill="#FF9900" stroke="#232F3E" stroke-width="1.8"/>
+
+                <!-- BODY -->
+                <rect x="50" y="116" width="100" height="46" rx="12" fill="#232F3E" stroke="#FF9900" stroke-width="2.4"/>
+                <!-- chest panel -->
+                <rect x="68" y="128" width="64" height="14" rx="3" fill="#FFFFFF"/>
+                <text x="100" y="138" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="800" fill="#232F3E" letter-spacing="0.2em">AWS</text>
+              </g>
+
+              <!-- Equalizer bars on the right earcup — only animate when listening -->
+              <g class="rec-eq" transform="translate(160 60)">
+                <rect class="bar b1" x="0"  y="14" width="3" height="4"  fill="#00A4DB"/>
+                <rect class="bar b2" x="6"  y="10" width="3" height="12" fill="#00A4DB"/>
+                <rect class="bar b3" x="12" y="6"  width="3" height="20" fill="#00A4DB"/>
+                <rect class="bar b4" x="18" y="10" width="3" height="12" fill="#00A4DB"/>
+                <rect class="bar b5" x="24" y="14" width="3" height="4"  fill="#00A4DB"/>
+              </g>
+
+              <!-- Sound waves on the left earcup — also gated on listening -->
+              <g class="rec-waves" transform="translate(20 70)">
+                <path class="w1" d="M14 0 Q4 10 14 20" fill="none" stroke="#FF9900" stroke-width="2"/>
+                <path class="w2" d="M8  -4 Q-6 10 8 24" fill="none" stroke="#FF9900" stroke-width="2"/>
+                <path class="w3" d="M2 -8 Q-16 10 2 28" fill="none" stroke="#FF9900" stroke-width="2"/>
+              </g>
+
+              <!-- "Listening…" label, only visible while recording -->
+              <text class="rec-mascot-label" x="100" y="176" text-anchor="middle"
+                    font-family="Space Grotesk, sans-serif" font-size="11" font-weight="800"
+                    fill="#FF9900" letter-spacing="0.14em">LISTENING</text>
+            </svg>
+          </div>
+
+          <div class="rec-status" id="recLiveStatus">Click <strong>Start recording</strong> to begin. Microphone access required.</div>
+          <div class="rec-controls">
+            <button class="btn btn-primary" id="recStartBtn" type="button">● Start recording</button>
+            <button class="btn btn-ghost"   id="recStopBtn"  type="button" disabled>■ Stop &amp; upload</button>
+          </div>
+          <div class="rec-meter" id="recMeter" aria-hidden="true"><span></span></div>
+        </div>
+
+        <div class="rec-tab-panel" data-panel="upload" hidden>
+          <div class="rec-status">Pick an existing recording (mp3, wav, m4a, webm — up to ~100 MB).</div>
+          <input type="file" id="recFile" accept="audio/*"
+                 aria-label="Audio file to upload" />
+          <div class="rec-controls">
+            <button class="btn btn-primary" id="recUploadBtn" type="button" disabled>↑ Upload &amp; transcribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

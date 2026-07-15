@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-07-10T18:00:00.000Z" agent="claude-code" version="24.0.0" type="device">
+  <diagram id="e2e-overview" name="1. E2E Overview">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Mainframe Modernization Agent — End-to-End Architecture (Account &lt;ACCOUNT_ID&gt;, us-east-1)" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== CLIENT ===================== -->
+        <mxCell id="browser" value="Browser Chat UI&#10;(SPA, S3 static website)&#10;mfmod-chat-ui" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.client;" vertex="1" parent="1">
+          <mxGeometry x="60" y="120" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s3ui" value="S3 Static Hosting&#10;+ CloudFront" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.simple_storage_service;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== WS API GW ===================== -->
+        <mxCell id="wsapigw" value="WebSocket API Gateway&#10;wss://&lt;WS_API_ID&gt;...prod&#10;routes: sendMessage / selectCustomer /&#10;selectLob / whatDoYouKnow /&#10;submitMeetingNotes / confirmMeetingMerge" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="280" y="120" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== WS LAMBDA ===================== -->
+        <mxCell id="wslambda" value="WS Lambda (thin SSE relay)&#10;MfModAgent-WsHandler&#10;• session binding (conn→customer/LoB)&#10;• turn counter&#10;• forwards SSE events 1:1&#10;• NO Bedrock call of its own" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="500" y="120" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <mxCell id="connddb" value="DynamoDB&#10;MfModAgent-WsConnections&#10;(connectionId → sa_id, customer_id,&#10;lob_id, turn)" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="500" y="320" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== AGENTCORE RUNTIME ===================== -->
+        <mxCell id="agentcorebox" value="Bedrock AgentCore Runtime — MfModAgent-&lt;RUNTIME_ID&gt; (direct_code_deploy, Python 3.13)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#232F3E;verticalAlign=top;fontSize=13;fontStyle=1;align=center;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="720" y="90" width="560" height="480" as="geometry" />
+        </mxCell>
+
+        <mxCell id="entrypoint" value="agentcore_app.py&#10;async-generator entrypoint&#10;graph.astream(state, [messages, updates])&#10;→ SSE events (token / status / artifact / done)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="750" y="130" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="langgraph" value="LangGraph StateGraph&#10;&#10;profile_loader → drift_guard → router&#10;→ [direct | help | summary | defer | ack]&#10;→ [kb ∥ mcp] → artifact_node&#10;→ response_generator (Sonnet 4.6)&#10;→ profile_updater&#10;&#10;+ listen-mode sub-graphs&#10;(meeting_notes / meeting_merge)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=11;align=left;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="750" y="230" width="240" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="models" value="Models:&#10;• Response: Sonnet 4.6&#10;• Router/intent/extract: Haiku 4.5&#10;• Rerank: Cohere 3.5 (in KB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="130" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="promptbox" value="Single prompt source: prompts.py&#10;• sentinel fences (Rule 0)&#10;• phase framing (D2)&#10;• probe directive (D3)&#10;• assumption labeling (Rule 4)&#10;• URL-fabrication guard (Rule 2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="230" width="230" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="artifactbox" value="Deterministic artifacts (no LLM):&#10;• wave_plan_csv&#10;• mermaid_architecture&#10;• risk_register_md&#10;• tco_estimate_md&#10;Phase-gated by profile inputs (2.2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="360" width="230" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== DATA STORES ===================== -->
+        <mxCell id="kb" value="Bedrock Knowledge Base&#10;&lt;KB_ID&gt;&#10;• Titan v2 embeddings, OpenSearch&#10;• FIXED_SIZE 512tok / 20% overlap&#10;• Cohere Rerank 3.5 (20→5)&#10;• score floor 0.40" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="760" y="660" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kbs3" value="S3 corpus&#10;mainframe-modernization-kb&#10;(72 docs: 24 CoE + 47 blog&#10;extracts + IBM/RH)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.simple_storage_service;" vertex="1" parent="1">
+          <mxGeometry x="640" y="800" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gateway" value="AgentCore Gateway&#10;mfmodagent-gateway-&lt;GATEWAY_ID&gt;&#10;(MCP protocol, SigV4/IAM auth,&#10;tool namespace: target___tool)" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.managed_apache_airflow;" vertex="1" parent="1">
+          <mxGeometry x="960" y="660" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <mxCell id="memddb" value="DynamoDB&#10;MfModAgent-CustomerMemory&#10;PK=sa#&lt;sa_id&gt;&#10;• profile snapshots (no TTL)&#10;• turn events (90-day TTL)&#10;• optimistic lock on version" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="660" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== MCP TARGETS ===================== -->
+        <mxCell id="mcptargets" value="Gateway MCP targets" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=top;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="850" y="800" width="440" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mainframemcp" value="MainframeMCP&#10;Lambda: MfModAgent-MainframeMCP&#10;9 tools (5 routed):&#10;get_migration_pattern, estimate_complexity,&#10;get_fsi_compliance_check, compare_partner_tools,&#10;list_taxonomy" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="870" y="830" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="awsmcp" value="AWSMCP&#10;AWS-managed mcpServer&#10;aws-mcp.us-east-1.api.aws&#10;(docs search/read, regions,&#10;availability, skills — 5 routed)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.servers;" vertex="1" parent="1">
+          <mxGeometry x="980" y="830" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="websearchmcp" value="WebSearchMCP&#10;AWS-managed connector&#10;(1 tool: WebSearch)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.internet;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="830" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pricingmcp" value="AwsPricingMCP&#10;awslabs pricing server on&#10;own AgentCore Runtime&#10;(7 tools: get_pricing, ...)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="830" width="50" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== RECORDINGS PIPELINE (compact) ===================== -->
+        <mxCell id="recbox" value="Recordings pipeline (item 4.2) — see page 5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;verticalAlign=top;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="450" width="560" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uploadapi" value="HTTP API&#10;POST /upload-url" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="80" y="490" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="recs3" value="S3&#10;mfmod-recordings&#10;(KMS, 30-day expiry)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.simple_storage_service;" vertex="1" parent="1">
+          <mxGeometry x="200" y="490" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="transcribe" value="Amazon&#10;Transcribe&#10;(speaker labels)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.transcribe;" vertex="1" parent="1">
+          <mxGeometry x="320" y="490" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="eventbridge" value="EventBridge&#10;job COMPLETED&#10;→ complete Lambda" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="1">
+          <mxGeometry x="440" y="490" width="45" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== EDGES ===================== -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;" edge="1" parent="1" source="browser" target="wsapigw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1label" value="wss:// (API key)" style="text;html=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="160" y="140" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="wsapigw" target="wslambda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="wslambda" target="connddb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3label" value="session binding + turn++" style="text;html=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="565" y="270" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="wslambda" target="entrypoint">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4label" value="invoke_agent_runtime&#10;(payload: prompt, sa_id, customer_id, lob_id, turn, kind)" style="text;html=1;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="590" y="60" width="240" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="langgraph" target="kb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5label" value="retrieve() w/ rerank" style="text;html=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="600" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="langgraph" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6label" value="JSON-RPC tools/call&#10;SigV4, ∥ ThreadPool(8), retry 5xx" style="text;html=1;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="900" y="595" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="langgraph" target="memddb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7label" value="load (turn start) /&#10;upsert + turn event (turn end)" style="text;html=1;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="595" width="160" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="kbs3" target="kb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8label" value="ingest" style="text;html=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="690" y="770" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="gateway" target="mcptargets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="browser" target="uploadapi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="uploadapi" target="recs3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="recs3" target="transcribe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="transcribe" target="eventbridge">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;exitX=1;exitY=0.5;" edge="1" parent="1" source="eventbridge" target="entrypoint">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14label" value="kind=meeting_notes → preview to WS conn" style="text;html=1;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="500" y="435" width="230" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Decision callouts -->
+        <mxCell id="dcallout1" value="🔒 D6: WS Lambda is a THIN relay — all intelligence in AgentCore. The old 'context_only' fast path bypassed profile/artifacts and was deleted." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="280" y="270" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dcallout2" value="🔒 D5: KB consulted on EVERY substantive turn. Only greetings (direct) and pure syntax lookups (mcp) skip it." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="620" y="660" width="130" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dcallout3" value="🔒 D11: Hybrid MCP hosting — AWS-managed endpoints where they exist (AWSMCP, WebSearch), own AgentCore Runtime for pricing (upstream awslabs parity)." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="800" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dcallout4" value="🔒 D1: Event-sourced memory — every turn writes snapshot + immutable turn event (90d TTL). Enables replay/audit/probe metrics." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="660" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dcallout5" value="⚠️ PARKED: Cognito JWT auth (pool exists, not wired). sa_id falls back to 'anonymous'. Highest-priority security gap before wider rollout." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="620" y="280" width="90" height="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="langgraph-flow" name="2. LangGraph Turn Flow">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t2" value="LangGraph Turn Flow — one chat turn through agent/graph.py" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="800" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="start" value="START&#10;(payload from ws_lambda)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="70" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ploader" value="profile_loader_node&#10;• load CustomerProfile(sa_id, customer_id, lob_id) from DDB&#10;• no customer bound → empty in-memory profile, NO DDB read&#10;• lob=default → also load customer-wide LoB overview&#10;• derive_phase()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="160" width="320" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="payloadkind" value="payload_kind?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="280" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mtnotes" value="meeting_notes_node&#10;(extract → preview,&#10;NO persistence)&#10;→ END" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="180" y="280" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mtmerge" value="meeting_merge_node&#10;(apply SA-confirmed rows,&#10;persists internally)&#10;→ END" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="180" y="380" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dguard" value="drift_guard_node&#10;(D8: intentionally NO-OP — heuristic misfired on&#10;capitalized verbs; allowlist replacement deferred)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999999;fontSize=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="380" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="router" value="router_node — two-tier classification&#10;&#10;1) INTENT (intent.py): cheap keyword path first,&#10;   Haiku fallback w/ prior_probe context (~5% of turns)&#10;   → substantive | defer | acknowledge | meta_help | meta_summary | chat&#10;&#10;2) TOPIC (router.py, substantive only): keyword fast-path (0ms),&#10;   Haiku fallback for ambiguous → kb | mcp | both + tool selection&#10;   (incl. pricing arg-inference ladder → get_pricing w/ structured filters)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="460" y="480" width="440" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="routedec" value="route?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="660" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- terminal nodes -->
+        <mxCell id="directn" value="direct_node&#10;bound-aware greeting" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="helpn" value="help_node&#10;full intro deck (only here)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="summaryn" value="summary_node&#10;deterministic profile recap&#10;(no LLM, ~10ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="defern" value="defer_node&#10;drop prior probe, ack" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="790" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ackn" value="acknowledge_node&#10;tiny ack" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="850" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- retrieval -->
+        <mxCell id="kbn" value="kb_node&#10;Bedrock KB retrieve()&#10;vector 20 → Cohere rerank 5&#10;score floor 0.40&#10;kb_sources attribution in STATE&#10;(logs unreliable in ∥ branches)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="760" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mcpn" value="mcp_node&#10;Gateway JSON-RPC tools/call&#10;• ThreadPool(8) parallel fan-out&#10;• results index-aligned&#10;• profile injected (Decimal-stripped)&#10;• retry ×1 on 5xx/transient&#10;• 30s timeout (10s on retry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="680" y="760" width="210" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="bothlabel" value="route=both: LangGraph list-return fan-out&#10;[both_kb ∥ both_mcp] — natural join at artifact_node&#10;(D7: ~4× faster than sequential)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="920" y="760" width="180" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="artifactn" value="artifact_node&#10;imperative verb + trigger regex → deterministic template&#10;(wave plan CSV / mermaid / risk register / TCO)&#10;phase-gated: missing inputs → artifact_gap_notes, no fabrication" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="480" y="910" width="380" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="respgen" value="response_generator (Sonnet 4.6, streamed)&#10;build_response_prompt(): profile + phase framing + KB + MCP + contradictions&#10;+ artifact refs + gap notes + open questions + probe directive&#10;untrusted data inside sentinel fences (Rule 0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1020" width="380" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pupdater" value="profile_updater_node (runs LAST — persistence after reply)&#10;• fact + decision extraction: 2 Haiku calls CONCURRENT (~500ms saved)&#10;• quote-grounding: extractor must echo SA's literal phrase, else dropped&#10;• contradiction → pending_contradictions (never overwrite)&#10;• open-question queue: add **To advance:** Q, drop answered&#10;• upsert snapshot (optimistic lock version &lt; write_ver) + turn event row" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1140" width="420" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="endn" value="END" style="ellipse;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="1290" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- edges -->
+        <mxCell id="g1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="start" target="ploader"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="ploader" target="payloadkind"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g3" value="meeting_notes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="payloadkind" target="mtnotes"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g4" value="meeting_merge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="payloadkind" target="mtmerge"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g5" value="chat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="payloadkind" target="dguard"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="dguard" target="router"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="router" target="routedec"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g8" value="direct" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="directn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g9" value="help" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="helpn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g10" value="summary" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="summaryn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g11" value="defer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="defern"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g12" value="acknowledge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="ackn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g13" value="kb / both" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="kbn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g14" value="mcp / both" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="routedec" target="mcpn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="kbn" target="artifactn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="mcpn" target="artifactn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="artifactn" target="respgen"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="respgen" target="pupdater"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g19" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0.5;exitY=1;" edge="1" parent="1" source="directn" target="pupdater"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="155" y="1200" /></Array></mxGeometry></mxCell>
+        <mxCell id="g20" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="pupdater" target="endn"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g21" value="drift confirm (dormant)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;fontSize=9;" edge="1" parent="1" source="dguard" target="directn"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- notes -->
+        <mxCell id="note2a" value="🔒 D3: probe is a PROMPT DIRECTIVE, not a node. 3 variants: ACTIVE / TACTICAL-SUPPRESS (route=mcp) / MUTED. Output parsed back via **To advance:** regex." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="920" y="1020" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="note2b" value="🔒 D2: phase (discovery→execution) is a DETERMINISTIC pure function over profile completeness — no LLM call (~200ms saved). Reversible." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="920" y="1140" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="note2c" value="Intent guard: substantive turns can NEVER collapse to route=direct (upgraded to kb). Prevents real questions being answered with a greeting." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="940" y="500" width="180" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="memory-flow" name="3. Memory &amp; Persistence">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t3" value="Customer Memory — DynamoDB schema, event sourcing, contradiction handling" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="800" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- schema box -->
+        <mxCell id="schema" value="MfModAgent-CustomerMemory — single-table design&#10;&#10;PK = sa#&lt;sa_id&gt;                                  ← per-SA isolation boundary&#10;&#10;SK patterns:&#10;  customer#&lt;cust&gt;#lob#&lt;lob&gt;#profile              ← snapshot (hot path, NO TTL)&#10;  customer#&lt;cust&gt;#lob#&lt;lob&gt;#turn#&lt;NNNNNN&gt;#&lt;ms&gt;   ← turn event (audit, 90-day TTL)&#10;&#10;customer_id = slug + 8-char SHA hash (JPMC / jpmc / Jpmc → same id)&#10;lob_id = plain slug (cards, wealth, capital-markets)&#10;NO GSI on customer_id — cross-SA reads impossible by design" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6D0F5;strokeColor=#9673A6;fontSize=11;align=left;spacing=12;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="80" y="70" width="620" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- profile shape -->
+        <mxCell id="profileshape" value="CustomerProfile (snapshot body)&#10;&#10;workload: num_cobol_programs, num_jcl_jobs, num_vsam_files,&#10;  num_copybooks, has_cics/db2/ims/mq, languages, databases,&#10;  mainframe_vendor, mips_capacity, online_tps_peak, batch_window_hours&#10;constraints: regulations[], data_residency[], target_date,&#10;  budget_band, risk_appetite, downtime_tolerance&#10;decisions_made[]: {turn, category, value, rationale, superseded_by_turn}&#10;facts[]: {turn, field_path, value, superseded_by_turn}  ← provenance&#10;open_questions[]: probe queue (cap 10)&#10;version: optimistic-lock counter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="760" y="70" width="560" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- write path -->
+        <mxCell id="writetitle" value="Write path (end of every substantive turn)" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="330" width="400" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="w1" value="1. Extract facts + decisions&#10;(2× Haiku, CONCURRENT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="370" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="w2" value="2. Quote-grounding filter&#10;extractor must echo the SA's&#10;literal phrase or fact is DROPPED&#10;(anti-hallucination)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="370" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="w3" value="3. apply_fact() per fact" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="370" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="factdec" value="field state?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fset" value="empty → SET&#10;+ Fact row w/ turn provenance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="330" y="560" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fext" value="list → EXTEND (append)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="560" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fcontra" value="different value → CONTRADICTS&#10;NOT applied. Queued as&#10;PendingContradiction → response&#10;asks SA to resolve NEXT turn.&#10;Old value stays source of truth." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="540" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="w4" value="4. upsert_profile() — optimistic lock&#10;&#10;ConditionExpression:&#10;attribute_not_exists(version) OR version &lt; :write_ver&#10;&#10;On contention: reload latest, merge in-memory delta&#10;(facts by turn, decisions by (category,value),&#10;union open_questions), retry ≤3, then raise LOUD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="680" width="360" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="w5" value="5. write_turn_event() — ALWAYS&#10;&#10;immutable audit row: user_query, response excerpt,&#10;facts/decisions extracted, contradictions,&#10;probe added/dropped, phase, version&#10;&#10;ttl = now + 90 days. Failure = log + swallow&#10;(audit loss ≠ turn failure)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="480" y="680" width="360" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ddbicon3" value="DynamoDB&#10;MfModAgent-CustomerMemory" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="920" y="700" width="70" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- probe queue -->
+        <mxCell id="probequeue" value="Open-question queue (probe-and-guide loop)&#10;&#10;• response ends w/ ONE customer-aware **To advance:** question&#10;• updater parses it via regex → profile.open_questions (cap 10)&#10;• next turn: prior_probe passed to intent classifier so 'Cards' /&#10;  'not now' / bare 'yes' classify correctly&#10;• facts that answer a queued question auto-drop it (keyword heuristic)&#10;• defer intent drops the question explicitly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="370" width="330" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- edges -->
+        <mxCell id="m1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="w1" target="w2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="w2" target="w3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="w3" target="factdec"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="factdec" target="fset"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="factdec" target="fext"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="factdec" target="fcontra"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="fset" target="w4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="w4" target="ddbicon3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="m9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="w5" target="ddbicon3"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- decision notes -->
+        <mxCell id="note3a" value="🔒 D1: event-sourced (snapshot + turn events) — enables replay, audit, probe metrics. Cost ≈ $0 at PAY_PER_REQUEST." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="580" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="note3b" value="🔧 Session fix 2026-07-10: lock condition changed to version &lt; write_ver — old 'version = expected-1' failed when multiple facts bumped version in-memory before the write, silently dropping facts." style="shape=note;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="580" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="note3c" value="🔧 Session fix 2026-07-10: DDB returns Decimal for numbers — _strip_decimals() now converts before profile is JSON-serialized into MCP tool args (was crashing profile-aware tools)." style="shape=note;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="720" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="note3d" value="🔧 Session fix 2026-07-10: list_customers_for_sa used ends_with() — not a valid DDB function (query always failed). Now filters SK suffix client-side." style="shape=note;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="720" width="180" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="retrieval-flow" name="4. Retrieval — KB + MCP Gateway">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t4" value="Retrieval — Bedrock KB two-stage pipeline + MCP Gateway multi-target fan-out" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="900" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- KB pipeline -->
+        <mxCell id="kbtitle" value="KB path (kb_node) — reused boto3 client (module singleton)" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="60" width="500" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q4" value="user_query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="130" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stage1" value="Stage 1 — Vector ANN&#10;Titan Text v2 embeddings&#10;OpenSearch Serverless&#10;pull 20 candidates&#10;(num_results=20 gives rerank&#10;headroom; 5 would just re-sort)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="250" y="90" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stage2" value="Stage 2 — Cohere Rerank 3.5&#10;cross-encoder, SERVER-SIDE&#10;inside same retrieve() call&#10;keep top 5&#10;(sees query+candidate together;&#10;calibrated relevance vs raw cosine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="490" y="90" width="210" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="floor" value="score ≥ 0.40?&#10;(post-rerank scale)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="740" y="100" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kept" value="kb_context: [Doc N — label] (relevance) + text&#10;kb_sources: {index, uri, score, label} in STATE&#10;(∥-branch logs don't reach CloudWatch reliably)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="930" y="80" width="290" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dropped" value="dropped → empty kb_context&#10;off-topic queries return NOTHING&#10;(Sonnet says 'no grounded info'&#10;instead of citing weak-match noise)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="930" y="170" width="290" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kbcorpus" value="Corpus: 72 docs (24 CoE/summit decks + 24 AWS&#10;Migration &amp; Modernization blog extracts + 22 APN&#10;partner blog extracts + IBM/RH + Reimagine blog)&#10;FIXED_SIZE 512-token chunks, 20% overlap&#10;Last ingested: 2026-07-08" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="250" y="230" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- MCP pipeline -->
+        <mxCell id="mcptitle" value="MCP path (mcp_node) — cached credentials (module singleton), SigV4-signed JSON-RPC" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="380" width="700" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="toolsel" value="router-selected mcp_tools[]&#10;+ profile injected into args&#10;for profile-aware tools&#10;(Decimal-stripped, empty-profile skipped)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="230" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="threadpool" value="ThreadPoolExecutor(max 8)&#10;parallel fan-out&#10;results INDEX-ALIGNED to request&#10;latency = slowest call, not sum&#10;retry ×1 on 5xx / URLError / timeout&#10;(30s first try, 10s retry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="420" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gateway4" value="AgentCore Gateway&#10;mfmodagent-gateway-&lt;GATEWAY_ID&gt;&#10;wire name = &lt;target&gt;___&lt;tool&gt;&#10;IAM (SigV4) auth" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.managed_apache_airflow;" vertex="1" parent="1">
+          <mxGeometry x="680" y="430" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- targets -->
+        <mxCell id="tgt1" value="MainframeMCP (Lambda)&#10;curated JSON reference data, versioned&#10;ROUTED (5): get_migration_pattern, estimate_complexity,&#10;get_fsi_compliance_check, compare_partner_tools, list_taxonomy&#10;DEPRECATED at agent layer (4): lookup_cobol_pattern,&#10;lookup_jcl_reference, map_mainframe_to_aws, compare_services&#10;→ Sonnet + KB + AWSMCP cover these better; reversible" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="380" width="360" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tgt2" value="AWSMCP (AWS-managed mcpServer target)&#10;https://aws-mcp.us-east-1.api.aws/mcp&#10;ROUTED (5): search_documentation, read_documentation,&#10;list_regions, get_regional_availability, retrieve_skill&#10;NOT wired: call_aws, run_script (need workload identity&#10;+ out of advisory scope)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="510" width="360" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tgt3" value="WebSearchMCP (AWS-managed connector)&#10;1 tool: WebSearch(query, maxResults)&#10;keyword-triggered: explicit web phrasing + recency signals&#10;(bare year mentions no longer fire — needs adjacent&#10;recency word; session fix 2026-07-10)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="630" width="360" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tgt4" value="AwsPricingMCP (awslabs server on own AgentCore Runtime)&#10;7 tools: get_pricing, get_pricing_service_codes/attributes/&#10;attribute_values, get_price_list_urls, generate_cost_report,&#10;get_bedrock_patterns&#10;Pricing ladder: regex-inferred args (instance+region+service)&#10;→ get_pricing DIRECT with structured filters; else discovery tool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=9;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="740" width="360" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- error handling -->
+        <mxCell id="errbox" value="Error surfacing (FIXES #15)&#10;JSON-RPC error envelope AND isError&#10;content both → '[tool] Error: msg'&#10;so the response LLM SEES failures&#10;instead of silent empty output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="570" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- notes -->
+        <mxCell id="note4a" value="🔒 D10: external AWS tools are OPT-IN per query, not every turn. Each extra MCP call = latency + prompt bloat + grounding surface. No auto 'KB-empty → docs fallback' until eval data defines a threshold." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="570" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note4b" value="🔒 Rerank server-side (not client): one round-trip, Bedrock handles auth/retries/batching. Cohere 3.5 over Amazon rerank: newer cross-encoder, better on long passages." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="600" y="230" width="250" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- edges -->
+        <mxCell id="r1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="q4" target="stage1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="stage1" target="stage2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="stage2" target="floor"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="floor" target="kept"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r5" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="floor" target="dropped"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="toolsel" target="threadpool"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="threadpool" target="gateway4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="gateway4" target="tgt1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="gateway4" target="tgt2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="gateway4" target="tgt3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="gateway4" target="tgt4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;" edge="1" parent="1" source="threadpool" target="errbox"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="listen-mode" name="5. Listen Mode &amp; Recordings">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t5" value="Listen Mode — meeting notes / recordings → extract → SA review → merge (items 4.1 + 4.2)" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Path A: pasted notes -->
+        <mxCell id="pathA" value="Path A — pasted notes" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="70" width="300" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="paste" value="SA pastes notes&#10;(NotesModal, customer&#10;must be bound)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="110" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Path B: recording -->
+        <mxCell id="pathB" value="Path B — audio recording" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="330" width="300" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="record" value="SA records audio&#10;(RecordModal, consent&#10;checkbox REQUIRED)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="370" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uploadl" value="Upload Lambda&#10;MfModAgent-Upload&#10;presigned S3 PUT&#10;(browser uploads direct;&#10;Lambda never proxies bytes)&#10;S3 metadata: sa_id, customer_id,&#10;lob_id, conn_id, consent" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="290" y="370" width="55" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="recs35" value="S3 mfmod-recordings&#10;KMS CMK, BlockPublicAccess,&#10;30-day lifecycle expiry" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.simple_storage_service;" vertex="1" parent="1">
+          <mxGeometry x="450" y="370" width="55" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="trigl" value="TranscribeTrigger Lambda&#10;(S3 PUT notification)&#10;starts Transcribe job&#10;w/ speaker labels" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="580" y="370" width="55" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="transcribe5" value="Amazon Transcribe&#10;speaker diarization" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.transcribe;" vertex="1" parent="1">
+          <mxGeometry x="710" y="370" width="55" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eb5" value="EventBridge&#10;job COMPLETED" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="1">
+          <mxGeometry x="840" y="370" width="55" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="compl" value="TranscribeComplete Lambda&#10;formats transcript w/ speakers,&#10;invokes AgentCore&#10;kind=meeting_notes,&#10;pushes preview to WS conn_id" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="970" y="370" width="55" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- extraction core -->
+        <mxCell id="extract" value="meeting_notes_node (conversation extractor, Haiku)&#10;&#10;• relaxed extractor for messy transcripts (hedging, interruptions)&#10;• 4 lists: facts / decisions / action_items / open_questions&#10;• GROUNDING (FIXES P3): quote must echo ≥5-word verbatim span&#10;  AND the persisted VALUE must have substring support in notes&#10;• free-string fields sanitized (control chars, 80-char cap)&#10;• 32K char input cap (~1hr call)&#10;• row_ids (f-0, d-1, a-2, q-3) for checkbox confirm&#10;• PERSISTS NOTHING — preview only (safety catch, 4.6)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="330" y="90" width="420" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="preview" value="meeting_preview event → frontend&#10;checkbox card: SA reviews rows,&#10;ticks the ones that are correct" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="810" y="110" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="merge" value="meeting_merge_node&#10;&#10;• applies ONLY SA-confirmed row_ids&#10;• same apply_fact / add_decision paths as typed input&#10;  (contradiction detection still applies)&#10;• action items + open questions → profile.open_questions (cap 20)&#10;• persists via upsert_profile + tagged turn event" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="810" y="210" width="420" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ddb5" value="DynamoDB&#10;CustomerMemory" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="240" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- edges -->
+        <mxCell id="l1" value="submitMeetingNotes (WS)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="paste" target="extract"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="extract" target="preview"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l3" value="confirmMeetingMerge (WS)&#10;preview + confirmed_ids" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="preview" target="merge"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="merge" target="ddb5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l5" value="POST /upload-url" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="record" target="uploadl"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l6" value="presigned PUT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" edge="1" parent="1" source="uploadl" target="recs35"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="recs35" target="trigl"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="trigl" target="transcribe5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="transcribe5" target="eb5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="eb5" target="compl"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="l11" value="transcript joins Path A at the extractor" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;exitX=0.5;exitY=0;" edge="1" parent="1" source="compl" target="extract"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- notes -->
+        <mxCell id="note5a" value="🔒 4.6 safety catch: extraction NEVER persists directly. The SA must review + tick rows. False positives from a 1-hour transcript would poison every future answer." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="note5b" value="🔒 4.3: separate CONVERSATION extractor — typed prompts are crisp; transcripts hedge ('we have, what, around 800 programs?'). Strict single-shot extractor lost too many true facts on this input." style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="480" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="note5c" value="⚠️ Known gap (review finding): confirmMeetingMerge round-trips the full preview through the CLIENT — a tampered client could inject rows that bypass quote-grounding. Fix: store preview server-side keyed by preview_id (planned, Phase 2 security)." style="shape=note;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="480" width="280" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="decision-summary" name="6. Decision Register (Summary)">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t6" value="Decision Register — summary (full rationale in diagrams/DECISIONS.md and ARCHITECTURE.md §10)" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="1100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr1" value="ROUTING &amp; RETRIEVAL&#10;&#10;D5 — KB on every substantive turn (only greetings + pure syntax skip)&#10;• Chunking: FIXED_SIZE 512 / 20% overlap (small flat corpus)&#10;• Rerank: Cohere 3.5, server-side, 20→5 candidates&#10;• Score floor 0.40 post-rerank (off-topic → empty, not noise)&#10;D10 — external AWS MCP tools opt-in per query, never ambient&#10;• MainframeMCP: 4 of 9 tools deprecated at agent layer&#10;  (Sonnet + KB + AWS docs beat stale curated JSON; reversible)&#10;• Pricing ladder: regex arg-inference fires get_pricing directly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="60" y="70" width="440" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr2" value="MEMORY&#10;&#10;D1 — event-sourced: snapshot + immutable turn events (90d TTL)&#10;• Optimistic locking, retry-with-merge ≤3, loud failure&#10;• Contradictions SURFACE, never overwrite (SA resolves)&#10;• Facts carry quote provenance; extractor output quote-grounded&#10;• customer_id = hashed slug (no enumeration; case-insensitive)&#10;• Per-SA PK isolation; deliberately NO GSI on customer_id&#10;• Fact pruning: 5/field, 200 total (400KB DDB item ceiling)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6D0F5;strokeColor=#9673A6;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="540" y="70" width="440" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr3" value="PRODUCT BEHAVIOR&#10;&#10;D2 — phase = deterministic pure function (no LLM; ~200ms saved)&#10;D3 — probe = prompt directive, not a graph node (fast tuning)&#10;• Probe suppression: tactical route / SA-on-a-roll / muted&#10;• Customer-aware probe phrasing (grounded beats generic)&#10;• Artifacts deterministic + phase-gated (no fabricated numbers)&#10;• Personas deleted (orphaned scaffolding)&#10;• Customer binding optional; unbound = generic answers, no writes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="70" width="440" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr4" value="ARCHITECTURE &amp; STREAMING&#10;&#10;D6 — single async-generator entrypoint; graph.astream end-to-end;&#10;  WS Lambda is a THIN relay (old context_only bypass deleted)&#10;D7 — KB ∥ MCP fan-out (route=both); tools ∥ in ThreadPool(8)&#10;• Single prompt source (prompts.py) — dual sources drift&#10;• Telemetry in STATE not logs (∥-branch CloudWatch gap)&#10;• MCP results index-aligned to request order" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="60" y="320" width="440" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr5" value="MCP TOPOLOGY&#10;&#10;D11 — hybrid hosting (supersedes D9):&#10;• AWS-managed endpoints where they exist (AWSMCP, WebSearch)&#10;  — zero hosting, upstream-maintained&#10;• awslabs pricing server on own AgentCore Runtime&#10;  — true upstream parity, one-line transport patch&#10;• Gateway namespaces tools as &lt;target&gt;___&lt;tool&gt;&#10;• D9 Lambda reimplementations deleted 2026-07-08" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="540" y="320" width="440" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr6" value="SECURITY&#10;&#10;• Sentinel fences around ALL untrusted data + standing Rule 0&#10;  (KB docs / MCP output / transcripts can't hijack the prompt)&#10;• Assumption labeling (Rule 4) — auditable, not silent&#10;• URL-fabrication guard (Rule 2) — no invented links&#10;• Listen-mode: preview-then-confirm, value+quote grounding&#10;⚠️ PARKED: Cognito JWT (sa_id spoofable until wired)&#10;⚠️ OPEN: client-side preview round-trip; rate limiting" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="320" width="440" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr7" value="DRIFT DETECTION&#10;&#10;D8 — intentionally OFF. Proper-noun heuristic misfired on&#10;capitalized verbs / partner names → bogus 'switching customer?'&#10;popups. Replacement = allowlist from customer-master data&#10;(deferred until that source exists). Mitigations: Customer chip&#10;is the only binding mechanism + quote-grounded extractor +&#10;per-SA DDB isolation. Eval rows assert the popup must NOT fire." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="60" y="550" width="440" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr8" value="EVAL DISCIPLINE&#10;&#10;• Sonnet (not Haiku) as rubric judge — Haiku too lenient&#10;• Two runners, one dataset (in-process fast loop + deployed E2E)&#10;• Forever-coverage: every real bug gets a dataset row (31 today)&#10;• Baseline-diff (not absolute threshold) is the regression gate&#10;• Deterministic criteria in Python; only judgement goes to LLM&#10;• Session 2026-07-10: +expected_tool_calls, +sources_footer&#10;  graders; stale route expectations corrected" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="540" y="550" width="440" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dr9" value="SESSION 2026-07-10 — FIXES &amp; OPTIMIZATIONS (deployed)&#10;&#10;BUGS: Decimal→JSON crash in profile-aware MCP args;&#10;ends_with() invalid in DDB FilterExpression; optimistic-lock&#10;condition dropped facts when version bumped in-memory&#10;&#10;OPTIMIZATIONS: fact+decision extraction concurrent (~500ms);&#10;boto3 client singletons (~100ms warm); MCP retry ×1 on 5xx;&#10;lru_cache graph singleton; WebSearch year-keywords tightened;&#10;utils.py + pricing_inference.py extracted; from_dict&#10;forward-compatible; dead drift code removed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;align=left;spacing=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="550" width="440" height="220" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

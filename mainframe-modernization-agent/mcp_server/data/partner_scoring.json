@@ -1,0 +1,76 @@
+{
+  "_version": "2026-06-16.1",
+  "_description": "Externalized weights + per-criterion rubrics for compare_partner_tools. Mirrors complexity_scoring.json: all scoring decisions live here so the ranking is auditable and tunable without a code deploy. Each criterion is scored 0..1; weights are normalized to sum to 1 by the engine.",
+  "_provenance": {
+    "last_reviewed": "2026-06-16",
+    "reviewed_by": "mainframe-modernization CoE — partner team",
+    "sources": [
+      {"label": "Partner selection rubric", "ref": "internal-partner-rubric"}
+    ]
+  },
+  "weight_profiles": {
+    "default": {
+      "source_system_coverage": 0.30,
+      "pattern_fit": 0.20,
+      "aws_m2_managed": 0.12,
+      "fsi_regulator_familiarity": 0.15,
+      "cloud_native_output": 0.10,
+      "cost_model": 0.08,
+      "vendor_ecosystem_size": 0.05
+    },
+    "regulator_first": {
+      "fsi_regulator_familiarity": 0.32,
+      "source_system_coverage": 0.24,
+      "pattern_fit": 0.16,
+      "aws_m2_managed": 0.10,
+      "vendor_ecosystem_size": 0.08,
+      "cloud_native_output": 0.05,
+      "cost_model": 0.05
+    },
+    "cost_sensitive": {
+      "cost_model": 0.28,
+      "source_system_coverage": 0.24,
+      "pattern_fit": 0.18,
+      "aws_m2_managed": 0.12,
+      "fsi_regulator_familiarity": 0.10,
+      "vendor_ecosystem_size": 0.05,
+      "cloud_native_output": 0.03
+    },
+    "cloud_native_first": {
+      "cloud_native_output": 0.30,
+      "source_system_coverage": 0.24,
+      "pattern_fit": 0.18,
+      "aws_m2_managed": 0.14,
+      "fsi_regulator_familiarity": 0.08,
+      "cost_model": 0.03,
+      "vendor_ecosystem_size": 0.03
+    }
+  },
+  "rubrics": {
+    "cost_model": {
+      "_note": "0..1 — higher is cheaper / more predictable for the customer.",
+      "license_mips_scaled": 0.3,
+      "product_license": 0.7,
+      "product_plus_services": 0.5,
+      "time_and_materials": 0.3,
+      "data_tool": 0.8,
+      "_default": 0.5
+    },
+    "cloud_native_output": {
+      "_note": "0..1 — higher means a more cloud-native end state.",
+      "none": 0.1,
+      "java_monolith": 0.5,
+      "cloud_native": 1.0,
+      "_default": 0.3
+    },
+    "fsi_regulator_familiarity": {
+      "_note": "Source field is a 1..5 integer; divided by 5 to normalize.",
+      "_scale_max": 5
+    },
+    "vendor_ecosystem_size": {
+      "_note": "Source field is a 1..5 integer; divided by 5 to normalize.",
+      "_scale_max": 5
+    }
+  },
+  "neutral_prior": 0.5
+}

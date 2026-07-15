@@ -1,0 +1,35 @@
+# Standalone Python package for the mainframe-modernization MCP server.
+#
+# This exists so Claude Desktop (and Cursor / any other local MCP client) can
+# launch the server via `uv run mfmod-mcp` without pulling in the larger
+# agent project's LangGraph / Bedrock dependencies. It's a parallel copy of
+# the tool functions — the production AgentCore Lambda continues to live
+# under ../deploy/mainframe_mcp_lambda.py and is unaffected by changes here.
+#
+# Layout note: this directory IS the package. `server.py` and `_helpers.py`
+# live at the root; we tell hatchling to treat the directory as the package
+# instead of expecting a `src/` layout.
+[project]
+name        = "mfmod-mcp"
+version     = "0.1.0"
+description = "Local MCP server exposing mainframe-modernization reference tools to Claude Desktop."
+requires-python = ">=3.11"
+dependencies = [
+  "fastmcp>=0.1.0",
+]
+
+[project.scripts]
+# `uv run mfmod-mcp` → launches server.py:main over stdio for Claude Desktop.
+mfmod-mcp = "server:main"
+
+[build-system]
+requires      = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# Ship the two top-level Python modules + the JSON data folder.
+include = ["server.py", "_helpers.py", "data/**/*.json"]
+[tool.hatch.build.targets.wheel.force-include]
+"server.py"     = "server.py"
+"_helpers.py"   = "_helpers.py"
+"data"          = "data"

@@ -1,0 +1,5 @@
+{
+  "api_id": "<WS_API_ID>",
+  "ws_url": "wss://<WS_API_ID>.execute-api.us-east-1.amazonaws.com/prod",
+  "api_key": "REPLACE_WITH_DEPLOYED_API_KEY"
+}

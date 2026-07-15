@@ -1,0 +1,76 @@
+# Secrets — NEVER commit these. Live Cognito M2M credentials and the
+# bedrock-agentcore identity config live at the repo root and would be
+# leaked the moment this directory is initialized as a git repo.
+.agentcore_identity_*
+.bedrock_agentcore.yaml
+*.env
+!*.env.example
+
+# AWS / cloud credentials
+.aws/
+*.pem
+*.key
+
+# Python build / venv artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.eggs/
+
+# Build outputs
+dist/
+build/
+*.zip
+dependencies.zip
+dependencies.hash
+
+# IDE / OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Test / eval scratch
+.pytest_cache/
+.coverage
+htmlcov/
+evals/runs/local-*.json
+evals/runs/agentcore-*.json
+# Keep the baseline files committed:
+!evals/runs/baseline.json
+!evals/runs/baseline-agentcore.json
+
+# Local cred caches
+/tmp/bedrock_creds.sh
+
+# Claude Code local settings — may contain session-scoped AWS keys
+# echoed back from allowlisted commands. Match at any depth.
+**/.claude/settings.local.json
+.claude/settings.local.json
+
+# Word/Office ephemera
+~$*
+MainframeAgent_Review_and_Fixes.docx
+ARCHITECTURE.docx
+
+# KB source content — Amazon-internal / partner-confidential decks + PDFs +
+# extracted markdown from AWS blogs. Do NOT publish to public repos. The KB
+# is rebuilt from these files via deploy/ingest_kb.py; the sources stay local.
+kb_data/
+
+# Internal working notes — incident history, security-audit writeups, and
+# the iteration backlog. Useful for local reference; not for public repos.
+FIXES.md
+REFINEMENTS.md
+SESSION_STATE.md
+
+# Stale/session-scoped docs — superseded by ARCHITECTURE.md, or written as
+# notes to a specific past conversation rather than for external readers.
+PLAN.md
+INTEGRATION.md
+
+# Internal tooling that only operates on FIXES.md (excluded above).
+scripts/

@@ -1,0 +1,47 @@
+{
+  "_version": "2026-05-26.1",
+  "statements": {
+    "JOB": {
+      "description": "Defines a batch job",
+      "aws_equivalent": "Step Functions state machine or AWS Batch job definition",
+      "example": "//MYJOB JOB (ACCT),'BATCH RUN',CLASS=A",
+      "migration_notes": "Map JOB parameters to Step Functions execution config or Batch job parameters"
+    },
+    "EXEC": {
+      "description": "Executes a program or procedure",
+      "aws_equivalent": "Lambda invocation or ECS task in Step Functions",
+      "example": "//STEP1 EXEC PGM=MYPROG",
+      "migration_notes": "Each EXEC step becomes a Step Functions state or Batch job step"
+    },
+    "DD": {
+      "description": "Data Definition - defines I/O datasets",
+      "aws_equivalent": "S3 bucket/key, DynamoDB table, or RDS connection",
+      "example": "//INPUT DD DSN=PROD.DATA.FILE,DISP=SHR",
+      "migration_notes": "Map DSN to S3 paths, DISP to access patterns"
+    },
+    "PROC": {
+      "description": "Cataloged procedure",
+      "aws_equivalent": "Step Functions nested workflow or reusable Lambda layer",
+      "example": "//MYPROC PROC PARAM1=DEFAULT",
+      "migration_notes": "Convert to parameterized Step Functions or shared modules"
+    },
+    "IF/THEN/ELSE": {
+      "description": "Conditional step execution",
+      "aws_equivalent": "Choice state in Step Functions",
+      "migration_notes": "Map condition codes to Step Functions Choice conditions"
+    },
+    "SORT": {
+      "description": "DFSORT/SYNCSORT utility",
+      "aws_equivalent": "AWS Glue ETL job, Athena query, or Lambda with sorting logic",
+      "migration_notes": "Large sorts → Glue/EMR; small sorts → Lambda"
+    }
+  },
+  "common_utilities": {
+    "IEBGENER": {"description": "Dataset copy", "aws_equivalent": "S3 copy (aws s3 cp) or Lambda file transfer"},
+    "IEBCOPY": {"description": "PDS member copy", "aws_equivalent": "S3 sync between prefixes"},
+    "IDCAMS": {"description": "VSAM utility (define, delete, repro)", "aws_equivalent": "DynamoDB table management via SDK or CloudFormation"},
+    "DFSORT": {"description": "Sort/merge utility", "aws_equivalent": "AWS Glue ETL or Athena ORDER BY"},
+    "IKJEFT01": {"description": "TSO batch processor", "aws_equivalent": "Systems Manager Run Command or Lambda"},
+    "DSNTEP2": {"description": "DB2 batch SQL processor", "aws_equivalent": "Aurora Data API batch execution or Glue job"}
+  }
+}
